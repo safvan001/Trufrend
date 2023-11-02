@@ -37,6 +37,8 @@ class InitiateVerificationView(APIView):
                 .services(VERIFY_SERVICE_SID) \
                 .verifications \
                 .create(to=phone, channel='sms')
+            profile = Profile.objects.create(phone_number=phone)
+            profile.save()
             return Response({'message': 'Verification initiated.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -83,10 +85,18 @@ class UserUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
 class Nickname(APIView):
     def post(self, request):
         nick_name = request.data.get('nick_name')
+        profile_id = request.data.get('profile_id')
          # Assuming you send the profile ID along with nick_name
-        profile=Profile.objects.create(nick_name=nick_name)
-        profile.save()
-        return Response({'message': 'Nick name added'}, status=status.HTTP_200_OK)
+        try:
+            profile = Profile.objects.get(id=profile_id)
+            profile.nick_name = nick_name
+            profile.save()
+            return Response({'message': 'Nick name added'}, status=status.HTTP_200_OK)
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+        # profile=Profile.objects.create(nick_name=nick_name)
+        # profile.save()
+        # return Response({'message': 'Nick name added'}, status=status.HTTP_200_OK)
 
 class Age(APIView):
     def post(self, request):

@@ -37,13 +37,14 @@ class Challenge(models.Model):
         return self.challenges
 
 class Profile(models.Model):
+    phone_number = models.CharField(max_length=15, default=None)
     dp=models.ImageField(upload_to='img/profile_pictures',null=True, blank=True)
     name = models.CharField(max_length=100)
     nick_name=models.CharField(max_length=50)
     choices=(('13-17 years old','13-17 years old'),('18 Years and old','18 Years and old'))
     age = models.TextField(null=True, blank=True,choices=choices)
     challenges = models.ManyToManyField(Challenge)
-    SOS = models.CharField(max_length=15, unique=True, null=False, blank=True)
+    SOS = models.CharField(max_length=15, null=False, blank=True)
 
 class Video(models.Model):
     title = models.CharField(max_length=100)
