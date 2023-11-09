@@ -1,5 +1,6 @@
 from django.db import models
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 from multiselectfield import MultiSelectField
 
@@ -22,14 +23,6 @@ CHOICES = (
         ('Health issues', 'Health issues'),
     )
 
-class Otp(models.Model):
-    phone_number = models.CharField(max_length=15, unique=True)  # Assuming a maximum length for phone numbers, adjust as needed
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)  # Link to your user model
-
-    def __str__(self):
-        return self.phone_number
-
-
 class Challenge(models.Model):
     challenges = models.CharField(max_length=100,choices=CHOICES)
 
@@ -37,21 +30,24 @@ class Challenge(models.Model):
         return self.challenges
 
 class Profile(models.Model):
-    phone_number = models.CharField(max_length=15, default=None)
-    dp=models.ImageField(upload_to='img/profile_pictures',null=True, blank=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True)
     name = models.CharField(max_length=100)
-    nick_name=models.CharField(max_length=50)
-    choices=(('13-17 years old','13-17 years old'),('18 Years and old','18 Years and old'))
-    age = models.TextField(null=True, blank=True,choices=choices)
+    nick_name = models.CharField(max_length=50)
     challenges = models.ManyToManyField(Challenge)
-    SOS = models.CharField(max_length=15, null=False, blank=True)
+
+    def __str__(self):
+        return self.phone_number
+class VideoPack(models.Model):
+    title = models.CharField(max_length=100)
+    # Add other fields if necessary
+    def __str__(self):
+        return self.title
 
 class Video(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.ForeignKey(VideoPack, on_delete=models.CASCADE)
     description = models.TextField()
-    video_file = models.FileField(upload_to='videos/video_pack')
-
-
-
-
-# Create your models here.
+    video_file = models.FileField(upload_to='videos/')
+    # Add other fields if necessary
+    def __str__(self):
+        return self.title.title

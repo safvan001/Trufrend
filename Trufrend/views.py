@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from decouple import config
 from twilio.rest import Client
 
-from Trufrend.models import Profile,Video,Challenge
+from Trufrend.models import Profile,Video,Challenge,VideoPack
+from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import viewsets
@@ -19,7 +20,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from Trufrend.serializers import ProfileSerializer,VideoSerializer
+from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer
 from django.conf import settings
 
 class InitiateVerificationView(APIView):
@@ -28,7 +29,9 @@ class InitiateVerificationView(APIView):
         ACCOUNT_SID = config('TWILIO_ACCOUNT_SID', default='')
         AUTH_TOKEN = config('TWILIO_AUTH_TOKEN', default='')
         VERIFY_SERVICE_SID = config('TWILIO_VERIFY_SERVICE_SID', default='')
-        phone = "+91" + request.data.get('phone')
+        phone ="+91" + request.data.get('phone')
+        profile, created = Profile.objects.get_or_create(phone_number=phone)
+        profile.save()
         if not phone:
             return Response({'error': 'phone number is requied'})
         try:
@@ -37,8 +40,6 @@ class InitiateVerificationView(APIView):
                 .services(VERIFY_SERVICE_SID) \
                 .verifications \
                 .create(to=phone, channel='sms')
-            profile = Profile.objects.create(phone_number=phone)
-            profile.save()
             return Response({'message': 'Verification initiated.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -63,12 +64,17 @@ class VerifyUserView(APIView):
                 .verification_checks \
                 .create(to=phone, code=code)
             if verification_check.status == 'approved':
+
                 # Create or update user object here
+
                 return Response({'message': 'User verified.'}, status=status.HTTP_200_OK)
             else:
                 return Response({'error': 'Invalid verification code.'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# class verifyuser(APIView):
+#     if Profile.phone_number==True:
+#         print("user is available")
 
 
 
@@ -98,18 +104,6 @@ class Nickname(APIView):
         # profile.save()
         # return Response({'message': 'Nick name added'}, status=status.HTTP_200_OK)
 
-class Age(APIView):
-    def post(self, request):
-        age = request.data.get('age')
-        profile_id = request.data.get('profile_id')  # Assuming you send the profile ID along with age
-
-        try:
-            profile = Profile.objects.get(id=profile_id)
-            profile.age = age
-            profile.save()
-            return Response({'message': 'Age added'}, status=status.HTTP_200_OK)
-        except Profile.DoesNotExist:
-            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class AddChallenges(APIView):
@@ -147,20 +141,17 @@ class AddChallenges(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class Videotitle(generics.ListCreateAPIView):
+    queryset = VideoPack.objects.all()
+    serializer_class = VideoPackSerializer
+class VideoListCreateView(generics.ListCreateAPIView):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
 
+class VideoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
 
-class CreateSOS(APIView):
-    def post(self, request):
-        SOS = request.data.get('SOS')
-        id = request.data.get('id')  # Assuming you send the profile ID along with age
-
-        try:
-            profile = Profile.objects.get(id=id)
-            profile.SOS = SOS
-            profile.save()
-            return Response({'message': 'SOS added'}, status=status.HTTP_200_OK)
-        except Profile.DoesNotExist:
-            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
 class UserCount(APIView):
     def get(self,request):
         try:
@@ -170,7 +161,13 @@ class UserCount(APIView):
                 print(str(e))  # Log the exception for debugging
                 return Response({'error': 'Error occurred while fetching user count.'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class VideoViewSet(viewsets.ModelViewSet):
-    queryset = Video.objects.all()
-    serializer_class = VideoSerializer
+
+
+
+
+
+
+
+
+
 # Create your views here.
