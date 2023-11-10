@@ -109,17 +109,17 @@ class Nickname(APIView):
 class AddChallenges(APIView):
     def post(self, request):
         try:
-            profile_id = request.data.get('profile_id')  # Change 'id' to 'profile_id'
+            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
             challenges_ids = request.data.get('challenges_ids', [])
             # Default to an empty list if not provided
 
             # Check if the profile_id is a valid number
-            if not profile_id :
-                return Response({'error': 'Invalid profile ID provided.'}, status=status.HTTP_400_BAD_REQUEST)
+            if not phone :
+                return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
             # Get the profile object
             try:
-                profile = Profile.objects.get(id=profile_id)
+                profile = Profile.objects.get(phone_number=phone)
             except Profile.DoesNotExist:
                 return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
 
