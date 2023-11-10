@@ -91,10 +91,10 @@ class UserUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
 class Nickname(APIView):
     def post(self, request):
         nick_name = request.data.get('nick_name')
-        phone = request.data.get('phone_number')
+        phone = "+91" + request.data.get('phone')
          # Assuming you send the profile ID along with nick_name
         try:
-            profile = Profile.objects.get(id=phone)
+            profile = Profile.objects.get(phone_number=phone)
             profile.nick_name = nick_name
             profile.save()
             return Response({'message': 'Nick name added'}, status=status.HTTP_200_OK)
