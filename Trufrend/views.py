@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer
+from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer
 from django.conf import settings
 
 class InitiateVerificationView(APIView):
@@ -91,15 +91,15 @@ class UserUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
 class Nickname(APIView):
     def post(self, request):
         nick_name = request.data.get('nick_name')
-        profile_id = request.data.get('profile_id')
+        phone = request.data.get('phone_number')
          # Assuming you send the profile ID along with nick_name
         try:
-            profile = Profile.objects.get(id=profile_id)
+            profile = Profile.objects.get(id=phone)
             profile.nick_name = nick_name
             profile.save()
             return Response({'message': 'Nick name added'}, status=status.HTTP_200_OK)
         except Profile.DoesNotExist:
-            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Phone number not found'}, status=status.HTTP_404_NOT_FOUND)
         # profile=Profile.objects.create(nick_name=nick_name)
         # profile.save()
         # return Response({'message': 'Nick name added'}, status=status.HTTP_200_OK)
@@ -141,6 +141,9 @@ class AddChallenges(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class ChallengeList(generics.ListAPIView):
+    queryset=Challenge.objects.all()
+    serializer_class=ChallengeSerializer
 class Videotitle(generics.ListCreateAPIView):
     queryset = VideoPack.objects.all()
     serializer_class = VideoPackSerializer

@@ -33,6 +33,7 @@ urlpatterns = [
     path('name/',Nickname.as_view(),name='name'),
     # path('video',VideoCreateView.as_view(),name='video'),
     path('addchallenge/',AddChallenges.as_view(),name='addchallenge'),
+    path('challenge',ChallengeList.as_view(),name='challenge'),
     path('usercount/',UserCount.as_view(),name='usecount'),
     path('videos/', VideoListCreateView.as_view(), name='video-list-create'),
     path('videotitle',Videotitle.as_view(),name='videotitle'),
