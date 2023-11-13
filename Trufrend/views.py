@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer
+from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer
 from django.conf import settings
 
 class InitiateVerificationView(APIView):
@@ -85,6 +85,9 @@ class ProfileListCreateAPIView(generics.ListCreateAPIView):
 class UserUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+class Dp(generics.CreateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = DpSerializer
 
 
 

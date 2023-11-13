@@ -25,7 +25,7 @@ CHOICES = (
 
 class Challenge(models.Model):
     challenges = models.CharField(max_length=100,choices=CHOICES)
-
+    # challenges=models.CharField(max_length=100)
     def __str__(self):
         return self.challenges
 
@@ -34,7 +34,7 @@ class Profile(models.Model):
     dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True)
     name = models.CharField(max_length=100)
     nick_name = models.CharField(max_length=50)
-    challenges = models.ManyToManyField(Challenge)
+    challenges = models.ForeignKey(Challenge, on_delete=models.CASCADE, default=True)
 
     def __str__(self):
         return self.phone_number

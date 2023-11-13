@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/verify-user/', VerifyUserView.as_view(), name='verify-user'),
     path('register/',ProfileListCreateAPIView.as_view(),name='register'),
     # path('view/',ProfileListAPIView.as_view(),name='view'),
+    path('dp/',Dp.as_view(),name='dp'),
     path('update/<int:pk>/',UserUpdateAPIView.as_view(),name='update'),
     path('name/',Nickname.as_view(),name='name'),
     # path('video',VideoCreateView.as_view(),name='video'),
