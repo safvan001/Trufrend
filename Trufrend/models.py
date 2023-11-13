@@ -30,11 +30,11 @@ class Challenge(models.Model):
         return self.challenges
 
 class Profile(models.Model):
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    phone_number = models.CharField(max_length=15,default=True)
     dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True)
     name = models.CharField(max_length=100)
     nick_name = models.CharField(max_length=50)
-    challenges = models.ForeignKey(Challenge, on_delete=models.CASCADE, default=True)
+    challenges = models.ManyToManyField(Challenge,blank=True, null=True)
 
     def __str__(self):
         return self.phone_number

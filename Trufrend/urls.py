@@ -39,6 +39,7 @@ urlpatterns = [
     path('videos/', VideoListCreateView.as_view(), name='video-list-create'),
     path('videotitle',Videotitle.as_view(),name='videotitle'),
     path('videos/<int:pk>/', VideoDetailView.as_view(), name='video-detail'),
+    path('get_user_profile/', get_user_profile.as_view(), name='get_user_profile'),
     # path('verify',verifyuser.as_view(),name='verify')
 ]
 urlpatterns += router.urls

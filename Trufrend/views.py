@@ -21,6 +21,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
 from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+
 from django.conf import settings
 
 class InitiateVerificationView(APIView):
@@ -167,13 +170,14 @@ class UserCount(APIView):
                 print(str(e))  # Log the exception for debugging
                 return Response({'error': 'Error occurred while fetching user count.'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class get_user_profile(APIView):
+    def post(self,request):
+        try:
+            phone="+91"+request.data.get('phone')
+            user=Profile.objects.get(phone_number=phone)
+            serializer=ProfileSerializer(user)
+            return Response(serializer.data)
+        except Profile.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
 
-
-
-
-
-
-
-
-
-# Create your views here.
+            # Create your views here.
