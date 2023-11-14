@@ -13,12 +13,12 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     # def update(self, instance, validated_data):
-    #     challenges_data = validated_data.pop('challenges', [])  # Remove challenges from validated_data
+    #     challenges_data = validated_data.pop('challenges', None)  # Use None as default
     #
-    #     instance = super().update(instance, validated_data)  # Call the default update method for non-nested fields
+    #     instance = super().update(instance, validated_data)
     #
-    #     # Update challenges for the profile
-    #     instance.challenges.set(challenges_data)
+    #     if challenges_data is not None:
+    #         instance.challenges.set(challenges_data)
     #
     #     return instance
 class DpSerializer(serializers.ModelSerializer):

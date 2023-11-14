@@ -85,6 +85,8 @@ class ProfileListCreateAPIView(generics.ListCreateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
 
+
+
 class UserUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -111,7 +113,9 @@ class Nickname(APIView):
         # return Response({'message': 'Nick name added'}, status=status.HTTP_200_OK)
 
 
-
+class ChallengeList(generics.ListAPIView):
+    queryset=Challenge.objects.all()
+    serializer_class=ChallengeSerializer
 class AddChallenges(APIView):
     def post(self, request):
         try:
@@ -147,9 +151,8 @@ class AddChallenges(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-class ChallengeList(generics.ListAPIView):
-    queryset=Challenge.objects.all()
-    serializer_class=ChallengeSerializer
+
+
 class Videotitle(generics.ListCreateAPIView):
     queryset = VideoPack.objects.all()
     serializer_class = VideoPackSerializer
