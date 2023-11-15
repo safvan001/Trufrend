@@ -123,6 +123,9 @@ class AddChallenges(APIView):
             challenges_ids = request.data.get('challenges_ids', [])
             # Default to an empty list if not provided
 
+            if not challenges_ids:
+                return Response({'error': 'challenges_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
             # Check if the profile_id is a valid number
             if not phone :
                 return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -156,13 +159,51 @@ class AddChallenges(APIView):
 class Videotitle(generics.ListCreateAPIView):
     queryset = VideoPack.objects.all()
     serializer_class = VideoPackSerializer
-class VideoListCreateView(generics.ListCreateAPIView):
-    queryset = Video.objects.all()
-    serializer_class = VideoSerializer
+# class VideoListCreateView(generics.ListCreateAPIView):
+#     queryset = Video.objects.all()
+#     serializer_class = VideoSerializer
+#
+# class VideoDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Video.objects.all()
+#     serializer_class = VideoSerializer
+# views.py
+from rest_framework.decorators import action
+# views.py
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
 
-class VideoDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Video.objects.all()
-    serializer_class = VideoSerializer
+# class VideoViewSet(viewsets.ModelViewSet):
+#     queryset = Video.objects.all()
+#     serializer_class = VideoSerializer
+#
+#     @action(detail=False, methods=['post'], url_path='create-multiple-videos')
+#     def create_multiple_videos(self, request):
+#         # Extract title_id and video data from the request
+#         title = request.data.get('title')
+#         video_data = request.data.get('videos', [])
+#
+#         try:
+#             # Get the VideoPack instance
+#             title = VideoPack.objects.get(pk=title)
+#
+#             # Create multiple videos under the same title
+#             videos_created = []
+#             for video in video_data:
+#                 try:
+#                     videos=Video.objects.get(video_file=video)
+#                     if videos not in videos_created:
+#                         videos_created.append(video)
+#                 except VideoPack.DoesNotExist:
+#                     return Response({'error': 'VideoPack with the given title_id does not exist.'},
+#                                     status=status.HTTP_404_NOT_FOUND)
+#             Video.video_file.add(*videos_created)
+#             return Response({'videos_created': videos_created}, status=status.HTTP_201_CREATED)
+#
+#
+#         except VideoPack.DoesNotExist:
+#             return Response({'error': 'VideoPack with the given title_id does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
+
 
 class UserCount(APIView):
     def get(self,request):
@@ -173,14 +214,20 @@ class UserCount(APIView):
                 print(str(e))  # Log the exception for debugging
                 return Response({'error': 'Error occurred while fetching user count.'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class get_user_profile(APIView):
-    def post(self,request):
-        try:
-            phone="+91"+request.data.get('phone')
-            user=Profile.objects.get(phone_number=phone)
-            serializer=ProfileSerializer(user)
-            return Response(serializer.data)
-        except Profile.DoesNotExist:
-            return Response({'error': 'User not found'}, status=404)
+
 
             # Create your views here.
+class get_user_profile(APIView):
+    def post(self, request):
+        phone = "+91" + request.data.get('phone')
+
+        # Validate phone number (you may want to replace 'validate_phone' with your own validation logic)
+
+        try:
+            profile = Profile.objects.get(phone_number=phone)
+            serializer = ProfileSerializer(instance=profile)
+            return Response(serializer.data)
+        except Profile.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

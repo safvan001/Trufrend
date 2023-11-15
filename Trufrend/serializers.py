@@ -25,13 +25,25 @@ class DpSerializer(serializers.ModelSerializer):
     class Meta:
         model=Profile
         fields= ('dp',)
+# class VideoPackSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = VideoPack
+#         fields = ('title',)
+#
+# class VideoSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Video
+#         fields = ('id','title','description','video_file')
 class VideoPackSerializer(serializers.ModelSerializer):
     class Meta:
         model = VideoPack
         fields = ('title',)
 
 class VideoSerializer(serializers.ModelSerializer):
-    title=VideoPackSerializer()
+    # title=VideoPackSerializer()
     class Meta:
         model = Video
         fields = ('id', 'title', 'description', 'video_file')
+
+

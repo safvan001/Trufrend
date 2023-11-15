@@ -22,6 +22,7 @@ from rest_framework import routers
 
 
 router = routers.DefaultRouter()
+router.register(r'videos', VideoViewSet, basename='video')
 
 
 urlpatterns = [
@@ -36,9 +37,9 @@ urlpatterns = [
     path('addchallenge/',AddChallenges.as_view(),name='addchallenge'),
     path('challenge/',ChallengeList.as_view(),name='challenge'),
     path('usercount/',UserCount.as_view(),name='usecount'),
-    path('videos/', VideoListCreateView.as_view(), name='video-list-create'),
+    # path('videos/', VideoListCreateView.as_view(), name='video-list-create'),
     path('videotitle',Videotitle.as_view(),name='videotitle'),
-    path('videos/<int:pk>/', VideoDetailView.as_view(), name='video-detail'),
+    # path('videos/<int:pk>/', VideoDetailView.as_view(), name='video-detail'),
     path('get_user_profile/', get_user_profile.as_view(), name='get_user_profile'),
     # path('verify',verifyuser.as_view(),name='verify')
 ]
