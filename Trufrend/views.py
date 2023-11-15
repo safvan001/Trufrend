@@ -203,6 +203,34 @@ from rest_framework.decorators import action
 #         except VideoPack.DoesNotExist:
 #             return Response({'error': 'VideoPack with the given title_id does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
+class VideoViewSet(viewsets.ModelViewSet):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
+
+    @action(detail=False, methods=['post'], url_path='create-multiple-videos')
+    def create_multiple_videos(self, request):
+        # Extract title_id and video data from the request
+        title = request.data.get('title')
+        video_data = request.data.get('videos', [])
+
+        try:
+            # Get the VideoPack instance
+            title = VideoPack.objects.get(pk=title)
+
+            # Create multiple videos under the same title
+            videos_created = []
+            for video in video_data:
+                serializer = VideoSerializer(data={**video, 'title': title})
+                if serializer.is_valid():
+                    serializer.save()
+                    videos_created.append(serializer.data)
+                else:
+                    print(serializer.errors)  # Log validation errors for debugging
+
+            return Response({'videos_created': videos_created}, status=status.HTTP_201_CREATED)
+
+        except VideoPack.DoesNotExist:
+            return Response({'error': 'VideoPack with the given title_id does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class UserCount(APIView):
@@ -221,6 +249,8 @@ class get_user_profile(APIView):
     def post(self, request):
         phone = "+91" + request.data.get('phone')
 
+        if not phone:
+            return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
         # Validate phone number (you may want to replace 'validate_phone' with your own validation logic)
 
         try:
