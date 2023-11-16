@@ -81,10 +81,22 @@ class VerifyUserView(APIView):
 
 
 
-class ProfileListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-
+# class ProfileListCreateAPIView(APIView):
+#     def post(self,request):
+#         phone = "+91" + request.data.get('phone')
+#         nick_name=request.data.get('nick_name')
+#         name=request.data.get('name')
+#         try:
+#             profile = Profile.objects.get(phone_number=phone)
+#             profile.nick_name = nick_name
+#             profile.name = name
+#             profile.save()
+#             return Response({'message': 'user registered successfully'}, status=status.HTTP_200_OK)
+#         except Profile.DoesNotExist:
+#             return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+    # def get(self):
+    #     profile=Profile.objects.all()
+    #     return Response(profile.data)
 
 
 class UserUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -171,6 +183,51 @@ from rest_framework.decorators import action
 # views.py
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework import status, parsers
+
+class ProfileListCreateAPIView(APIView):
+
+    def post(self, request):
+        phone = "+91" + request.data.get('phone')
+        nick_name = request.data.get('nick_name')
+        name = request.data.get('name')
+        dp=request.data.get('dp')
+        challenges=request.data.get('challenges',[])
+
+        try:
+            profile = Profile.objects.get(phone_number=phone)
+            profile.nick_name = nick_name
+            profile.name = name
+            profile.challenges.add(*challenges)
+
+            # If an image is provided, save it to the 'dp' field
+            if dp:
+                profile.dp = dp
+
+            profile.save()
+
+            return Response({'message': 'User profile updated successfully'}, status=status.HTTP_200_OK)
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile Does not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def get(self, request):
+        # Retrieve the list of profiles
+        profiles = Profile.objects.all()
+
+        # Serialize the profiles
+        serializer = ProfileSerializer(profiles, many=True)
+
+        # Return the serialized data as the API response
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+    # def list(self, request, *args, **kwargs):
+    #     profiles = self.get_queryset()
+    #     serializer = self.get_serializer(profiles, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 # class VideoViewSet(viewsets.ModelViewSet):
 #     queryset = Video.objects.all()

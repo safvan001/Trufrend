@@ -34,7 +34,7 @@ class Profile(models.Model):
     dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True)
     name = models.CharField(max_length=100)
     nick_name = models.CharField(max_length=50)
-    challenges = models.ManyToManyField(Challenge,blank=True, null=True)
+    challenges = models.ManyToManyField(Challenge)
 
     def __str__(self):
         return self.phone_number

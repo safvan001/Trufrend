@@ -10,7 +10,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     # challenges=ChallengeSerializer(many=True)
     class Meta:
         model = Profile
-        fields = ('dp','name','nick_name','challenges')
+        fields = '__all__'
 
     # def update(self, instance, validated_data):
     #     challenges_data = validated_data.pop('challenges', None)  # Use None as default
