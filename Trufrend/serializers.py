@@ -12,6 +12,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = '__all__'
 
+
+
+
     # def update(self, instance, validated_data):
     #     challenges_data = validated_data.pop('challenges', None)  # Use None as default
     #
