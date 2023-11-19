@@ -44,7 +44,7 @@ class VideoPackSerializer(serializers.ModelSerializer):
         fields = ('title',)
 
 class VideoSerializer(serializers.ModelSerializer):
-    # title=VideoPackSerializer()
+    title=VideoPackSerializer()
     class Meta:
         model = Video
         fields = ('id', 'title', 'description', 'video_file')

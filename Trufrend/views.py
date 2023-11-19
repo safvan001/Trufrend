@@ -267,7 +267,22 @@ class VideoViewSet(viewsets.ModelViewSet):
         except VideoPack.DoesNotExist:
             return Response({'error': 'VideoPack with the given title_id does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
-
+# class VideoPackView(APIView):
+#     def get(self, request, title_id):
+#         try:
+#             title = VideoPack.objects.get(pk=title_id)
+#         except VideoPack.DoesNotExist:
+#             return Response({'error': 'Title not found'}, status=status.HTTP_404_NOT_FOUND)
+#
+#         videos = Video.objects.filter(title=title)
+#         video_serializer = VideoSerializer(videos, many=True)
+#
+#         title_data = {
+#             'title_id': title.id,
+#             'videos': video_serializer.data
+#         }
+#
+#         return Response(title_data, status=status.HTTP_200_OK)
 class UserCount(APIView):
     def get(self,request):
         try:
