@@ -219,7 +219,7 @@ class ProfileListCreateAPIView(generics.ListAPIView):
 #
 #         try:
 #             # Get the VideoPack instance
-#             title = VideoPack.objects.get(pk=title)
+#             title = VideoPack.objects.get(title=title)
 #
 #             # Create multiple videos under the same title
 #             videos_created = []
@@ -238,51 +238,27 @@ class ProfileListCreateAPIView(generics.ListAPIView):
 #         except VideoPack.DoesNotExist:
 #             return Response({'error': 'VideoPack with the given title_id does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
+
 class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
 
-    @action(detail=False, methods=['post'], url_path='create-multiple-videos')
-    def create_multiple_videos(self, request):
-        # Extract title_id and video data from the request
-        title = request.data.get('title')
-        video_data = request.data.get('videos', [])
-
+class VideoPackView(APIView):
+    def get(self, request, title_id):
         try:
-            # Get the VideoPack instance
-            title = VideoPack.objects.get(pk=title)
-
-            # Create multiple videos under the same title
-            videos_created = []
-            for video in video_data:
-                serializer = VideoSerializer(data={**video, 'title': title})
-                if serializer.is_valid():
-                    serializer.save()
-                    videos_created.append(serializer.data)
-                else:
-                    print(serializer.errors)  # Log validation errors for debugging
-
-            return Response({'videos_created': videos_created}, status=status.HTTP_201_CREATED)
-
+            title = VideoPack.objects.get(pk=title_id)
         except VideoPack.DoesNotExist:
-            return Response({'error': 'VideoPack with the given title_id does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Title not found'}, status=status.HTTP_404_NOT_FOUND)
 
-# class VideoPackView(APIView):
-#     def get(self, request, title_id):
-#         try:
-#             title = VideoPack.objects.get(pk=title_id)
-#         except VideoPack.DoesNotExist:
-#             return Response({'error': 'Title not found'}, status=status.HTTP_404_NOT_FOUND)
-#
-#         videos = Video.objects.filter(title=title)
-#         video_serializer = VideoSerializer(videos, many=True)
-#
-#         title_data = {
-#             'title_id': title.id,
-#             'videos': video_serializer.data
-#         }
-#
-#         return Response(title_data, status=status.HTTP_200_OK)
+        videos = Video.objects.filter(title=title)
+        video_serializer = VideoSerializer(videos, many=True)
+
+        title_data = {
+            'title_id': title.id,
+            'videos': video_serializer.data
+        }
+
+        return Response(title_data, status=status.HTTP_200_OK)
 class UserCount(APIView):
     def get(self,request):
         try:
