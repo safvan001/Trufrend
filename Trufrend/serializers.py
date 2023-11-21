@@ -36,7 +36,7 @@ class VideoPackSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class VideoSerializer(serializers.ModelSerializer):
-    video_files=VideoPackSerializer(many=True)
+    # video_files=VideoPackSerializer(many=True)
     class Meta:
         model = Video
         fields = '__all__'
