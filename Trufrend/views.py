@@ -245,10 +245,10 @@ class VideoViewSet(viewsets.ModelViewSet):
 class VideoPackView(generics.ListCreateAPIView):
     queryset = VideoPack.objects.all()
     serializer_class = VideoPackSerializer
+
 class AddToFavoriteView(generics.ListCreateAPIView):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteProfileSerializer
-
 
 
 class RemoveFromFavoriteView(generics.DestroyAPIView):

@@ -41,6 +41,9 @@ class Profile(models.Model):
         return self.phone_number
 class VideoPack(models.Model):
     video_file = models.FileField(upload_to='videos/',default=1)
+    subtitle=models.CharField(max_length=200,default=' ')
+    image=models.ImageField(upload_to='img/videobanner', null=True, blank=True)
+
 
     def __str__(self):
         return basename(str(self.video_file))
@@ -50,6 +53,7 @@ class Video(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     video_files = models.ManyToManyField(VideoPack)
+    posterimage=models.ImageField(upload_to='img/Posterimage', null=True, blank=True)
     # Add other fields if necessary
     def __str__(self):
         return self.title
