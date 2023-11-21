@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 from multiselectfield import MultiSelectField
+from os.path import basename
 
 CHOICES = (
         ('Anxiety', 'Anxiety'),
@@ -39,15 +40,35 @@ class Profile(models.Model):
     def __str__(self):
         return self.phone_number
 class VideoPack(models.Model):
+    video_file = models.FileField(upload_to='videos/',default=1)
+
+    def __str__(self):
+        return basename(str(self.video_file))
+    # Add other fields if necessary
+
+class Video(models.Model):
     title = models.CharField(max_length=100)
+    description = models.TextField()
+    video_files = models.ManyToManyField(VideoPack)
     # Add other fields if necessary
     def __str__(self):
         return self.title
+class Favorite(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
-class Video(models.Model):
-    title = models.ForeignKey(VideoPack, on_delete=models.CASCADE)
-    description = models.TextField()
-    video_file = models.FileField(upload_to='videos/')
-    # Add other fields if necessary
-    def __str__(self):
-        return self.title.title
+
+
+
+
+
+
+
+
+# class VideoPack(models.Model):
+#     title = models.CharField(max_length=100)
+#     video_file = models.FileField(upload_to='videos/', default='')
+#
+# class Video(models.Model):
+#     video_pack = models.ForeignKey(VideoPack, related_name='videos', on_delete=models.CASCADE,default=True)
+#     description = models.TextField()
+#     video_file = models.FileField(upload_to='videos/', default='')

@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from decouple import config
 from twilio.rest import Client
 
-from Trufrend.models import Profile,Video,Challenge,VideoPack
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import status
@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer
+from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -214,12 +214,11 @@ class ProfileListCreateAPIView(generics.ListAPIView):
 #     @action(detail=False, methods=['post'], url_path='create-multiple-videos')
 #     def create_multiple_videos(self, request):
 #         # Extract title_id and video data from the request
-#         title = request.data.get('title')
 #         video_data = request.data.get('videos', [])
 #
 #         try:
 #             # Get the VideoPack instance
-#             title = VideoPack.objects.get(title=title)
+#             # title = VideoPack.objects.get(title=title)
 #
 #             # Create multiple videos under the same title
 #             videos_created = []
@@ -231,7 +230,7 @@ class ProfileListCreateAPIView(generics.ListAPIView):
 #                 except VideoPack.DoesNotExist:
 #                     return Response({'error': 'VideoPack with the given title_id does not exist.'},
 #                                     status=status.HTTP_404_NOT_FOUND)
-#             Video.video_file.add(*videos_created)
+#             Video.video_file.set(*videos_created)
 #             return Response({'videos_created': videos_created}, status=status.HTTP_201_CREATED)
 #
 #
@@ -243,22 +242,65 @@ class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
 
-class VideoPackView(APIView):
-    def get(self, request, title_id):
-        try:
-            title = VideoPack.objects.get(pk=title_id)
-        except VideoPack.DoesNotExist:
-            return Response({'error': 'Title not found'}, status=status.HTTP_404_NOT_FOUND)
+class VideoPackView(generics.ListCreateAPIView):
+    queryset = VideoPack.objects.all()
+    serializer_class = VideoPackSerializer
+class AddToFavoriteView(generics.ListCreateAPIView):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteProfileSerializer
 
-        videos = Video.objects.filter(title=title)
-        video_serializer = VideoSerializer(videos, many=True)
 
-        title_data = {
-            'title_id': title.id,
-            'videos': video_serializer.data
-        }
 
-        return Response(title_data, status=status.HTTP_200_OK)
+class RemoveFromFavoriteView(generics.DestroyAPIView):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteProfileSerializer
+
+
+
+
+
+# class VideoList(APIView):
+#     def get(self, request):
+#
+#         title_name = request.query_params.get('title')
+#
+#         if not title_name:
+#             return Response({'error': 'Title parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+#         video_pack = VideoPack.objects.get(title= title_name)
+#
+#         # Filter videos by title
+#         videos = Video.objects.filter(title=video_pack)
+#
+#         # Serialize the queryset
+#         serializer = VideoSerializer(videos, many=True)
+#
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+# class VideoPackView(APIView):
+#     def get(self, request, title_id):
+#         try:
+#             title = VideoPack.objects.get(pk=title_id)
+#         except VideoPack.DoesNotExist:
+#             return Response({'error': 'Title not found'}, status=status.HTTP_404_NOT_FOUND)
+#
+#         videos = Video.objects.filter(title=title)
+#         video_serializer = VideoSerializer(videos, many=True)
+#
+#         title_data = {
+#             'title_id': title.id,
+#             'videos': video_serializer.data
+#         }
+#
+#         return Response(title_data, status=status.HTTP_200_OK)
 class UserCount(APIView):
     def get(self,request):
         try:

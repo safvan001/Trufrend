@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from Trufrend.models import Profile,Video,Challenge,VideoPack
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite
 
 
 class ChallengeSerializer(serializers.ModelSerializer):
@@ -28,25 +28,28 @@ class DpSerializer(serializers.ModelSerializer):
     class Meta:
         model=Profile
         fields= ('dp',)
-# class VideoPackSerializer(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = VideoPack
-#         fields = ('title',)
-#
-# class VideoSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Video
-#         fields = ('id','title','description','video_file')
+
+
 class VideoPackSerializer(serializers.ModelSerializer):
     class Meta:
         model = VideoPack
-        fields = ('title',)
+        fields = '__all__'
 
 class VideoSerializer(serializers.ModelSerializer):
-    title=VideoPackSerializer()
+    video_files=VideoPackSerializer(many=True)
     class Meta:
         model = Video
-        fields = ('id', 'title', 'description', 'video_file')
+        fields = '__all__'
+class FavoriteProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
+        fields = '__all__'
+
+
+
+
+
+
+
 
 

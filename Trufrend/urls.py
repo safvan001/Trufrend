@@ -25,6 +25,8 @@ router = routers.DefaultRouter()
 router.register(r'videos', VideoViewSet, basename='video')
 
 
+
+
 urlpatterns = [
     path('api/intiate-user/', InitiateVerificationView.as_view(), name="initiate-verify"),
     path('api/verify-user/', VerifyUserView.as_view(), name='verify-user'),
@@ -37,9 +39,12 @@ urlpatterns = [
     path('addchallenge/',AddChallenges.as_view(),name='addchallenge'),
     path('challenge/',ChallengeList.as_view(),name='challenge'),
     path('usercount/',UserCount.as_view(),name='usecount'),
-    path('videos/<int:title_id>/',  VideoPackView.as_view(), name='video-list-create'),
+    # path('videos/<str:title>/',  VideoList.as_view(), name='video-list-create'),
+    # path('video_packs/', VideoPackView.as_view(), name='video_pack_list'),
     path('videotitle',Videotitle.as_view(),name='videotitle'),
-    # path('videos/<int:pk>/', VideoDetailView.as_view(), name='video-detail'),
+    path('videopack/', VideoPackView.as_view(), name='video-detail'),
+    path('add-to-favorite/', AddToFavoriteView.as_view(), name='add-to-favorite'),
+    path('remove-from-favorite/<int:pk>/', RemoveFromFavoriteView.as_view(), name='remove-from-favorite'),
     path('get_user_profile/', get_user_profile.as_view(), name='get_user_profile'),
     # path('verify',verifyuser.as_view(),name='verify')
 ]

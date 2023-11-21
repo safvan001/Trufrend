@@ -5,4 +5,5 @@ admin.site.register(Profile)
 admin.site.register(Challenge)
 admin.site.register(Video)
 admin.site.register(VideoPack)
+admin.site.register(Favorite)
 # Register your models here.
