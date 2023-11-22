@@ -42,6 +42,8 @@ class Profile(models.Model):
 class VideoPack(models.Model):
     video_file = models.FileField(upload_to='videos/',default=1)
     subtitle=models.CharField(max_length=200,default=' ')
+    description = models.TextField(default='')
+    videolen=models.CharField(max_length=100,default='10')
     image=models.ImageField(upload_to='img/videobanner', null=True, blank=True)
 
 
@@ -51,7 +53,6 @@ class VideoPack(models.Model):
 
 class Video(models.Model):
     title = models.CharField(max_length=100)
-    description = models.TextField()
     video_files = models.ManyToManyField(VideoPack)
     posterimage=models.ImageField(upload_to='img/Posterimage', null=True, blank=True)
     # Add other fields if necessary
