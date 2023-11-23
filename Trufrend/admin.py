@@ -6,4 +6,5 @@ admin.site.register(Challenge)
 admin.site.register(Video)
 admin.site.register(VideoPack)
 admin.site.register(Favorite)
+admin.site.register(ContactUs)
 # Register your models here.

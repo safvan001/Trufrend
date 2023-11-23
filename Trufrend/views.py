@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from decouple import config
 from twilio.rest import Client
 
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import status
@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer
+from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -155,14 +155,7 @@ class AddChallenges(APIView):
 class Videotitle(generics.ListCreateAPIView):
     queryset = VideoPack.objects.all()
     serializer_class = VideoPackSerializer
-# class VideoListCreateView(generics.ListCreateAPIView):
-#     queryset = Video.objects.all()
-#     serializer_class = VideoSerializer
-#
-# class VideoDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Video.objects.all()
-#     serializer_class = VideoSerializer
-# views.py
+
 from rest_framework.decorators import action
 # views.py
 from rest_framework import viewsets, status
@@ -198,46 +191,6 @@ class ProfileListCreateAPIView(generics.ListAPIView):
             return Response({'error': 'Profile Does not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-
-
-
-    # def list(self, request, *args, **kwargs):
-    #     profiles = self.get_queryset()
-    #     serializer = self.get_serializer(profiles, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-# class VideoViewSet(viewsets.ModelViewSet):
-#     queryset = Video.objects.all()
-#     serializer_class = VideoSerializer
-#
-#     @action(detail=False, methods=['post'], url_path='create-multiple-videos')
-#     def create_multiple_videos(self, request):
-#         # Extract title_id and video data from the request
-#         video_data = request.data.get('videos', [])
-#
-#         try:
-#             # Get the VideoPack instance
-#             # title = VideoPack.objects.get(title=title)
-#
-#             # Create multiple videos under the same title
-#             videos_created = []
-#             for video in video_data:
-#                 try:
-#                     videos=Video.objects.get(video_file=video)
-#                     if videos not in videos_created:
-#                         videos_created.append(video)
-#                 except VideoPack.DoesNotExist:
-#                     return Response({'error': 'VideoPack with the given title_id does not exist.'},
-#                                     status=status.HTTP_404_NOT_FOUND)
-#             Video.video_file.set(*videos_created)
-#             return Response({'videos_created': videos_created}, status=status.HTTP_201_CREATED)
-#
-#
-#         except VideoPack.DoesNotExist:
-#             return Response({'error': 'VideoPack with the given title_id does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-
-
 class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
@@ -255,52 +208,85 @@ class RemoveFromFavoriteView(generics.DestroyAPIView):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteProfileSerializer
 
+# class StoriesView(generics.ListCreateAPIView):
+#     queryset=Stories.objects.all()
+#     serializer_class = StorySerializer
 
-
-
-
-# class VideoList(APIView):
-#     def get(self, request):
+# class ContactusView(APIView):
+#     def post(self,request):
+#         phone="+91" + request.data.get('phone')
+#         firstname=request.data.get('firstname')
+#         Lastname=request.data.get('Lastname')
+#         email=request.data.get('email')
+#         subject=request.data.get('subject')
+#         description=request.data.get('description')
+#         profile = Profile.objects.get(phone_number=phone)
+#         if profile:
+#             # Assuming you have a serializer for ContactUs
+#             contact_serializer = ContactSerializer(data={
+#                 'firstname': firstname,
+#                 'Lastname': Lastname,
+#                 'email': email,
+#                 'subject': subject,
+#                 'description': description,
+#             })
+#             if contact_serializer.is_valid():
+#                 contact_serializer.save()
+#                 return Response({'message': 'Successfully registered your Query'}, status=status.HTTP_201_CREATED)
+#             else:
+#                 return Response({'error': contact_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 #
-#         title_name = request.query_params.get('title')
-#
-#         if not title_name:
-#             return Response({'error': 'Title parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
-#         video_pack = VideoPack.objects.get(title= title_name)
-#
-#         # Filter videos by title
-#         videos = Video.objects.filter(title=video_pack)
-#
-#         # Serialize the queryset
-#         serializer = VideoSerializer(videos, many=True)
-#
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+#         else:
+#             return Response({'error': 'Profile does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ContactUsCreateAPIView(APIView):
+    def post(self, request):
+        phone = "+91" + request.data.get('phone')
+        firstname = request.data.get('firstname')
+        Lastname = request.data.get('Lastname')
+        email = request.data.get('email')
+        subject = request.data.get('subject')
+        description = request.data.get('description')
+
+        # Check if a profile with the given phone number exists
+        profiles = Profile.objects.filter(phone_number=phone)
+
+        if profiles.exists():
+            # Assuming you have a serializer for ContactUs
+            contact_serializer = ContactSerializer(data={
+                'phone': profiles.first().id,  # Assuming phone is a ForeignKey in ContactUs
+                'firstname': firstname,
+                'Lastname': Lastname,
+                'email': email,
+                'subject': subject,
+                'description': description,
+            })
+
+            if contact_serializer.is_valid():
+                contact_serializer.save()
+                return Response({'message': 'Successfully registered your Query'}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'error': contact_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': 'Profile does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    def get(self,request):
+        try:
+            contact= ContactUs.objects.all()
+
+            # Serialize the data
+            serializer = ContactSerializer(contact, many=True)
+
+            # Return the serialized data as a JSON response
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
 
 
 
-
-
-
-
-# class VideoPackView(APIView):
-#     def get(self, request, title_id):
-#         try:
-#             title = VideoPack.objects.get(pk=title_id)
-#         except VideoPack.DoesNotExist:
-#             return Response({'error': 'Title not found'}, status=status.HTTP_404_NOT_FOUND)
-#
-#         videos = Video.objects.filter(title=title)
-#         video_serializer = VideoSerializer(videos, many=True)
-#
-#         title_data = {
-#             'title_id': title.id,
-#             'videos': video_serializer.data
-#         }
-#
-#         return Response(title_data, status=status.HTTP_200_OK)
 class UserCount(APIView):
     def get(self,request):
         try:

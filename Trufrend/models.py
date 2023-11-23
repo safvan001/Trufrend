@@ -61,19 +61,30 @@ class Video(models.Model):
 class Favorite(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
+class ContactUs(models.Model):
+    phone=models.ForeignKey(Profile, on_delete=models.CASCADE)
+    firstname=models.CharField(max_length=100)
+    Lastname=models.CharField(max_length=100)
+    email= models.CharField(max_length=254)
+    subject=models.TextField()
+    description=models.TextField()
+    def __str__(self):
+        return self.firstname
 
 
-
-
-
-
-
-
-# class VideoPack(models.Model):
-#     title = models.CharField(max_length=100)
-#     video_file = models.FileField(upload_to='videos/', default='')
+# class Stories(models.Model):
+#     story_file = models.FileField(upload_to='stories/')
 #
-# class Video(models.Model):
-#     video_pack = models.ForeignKey(VideoPack, related_name='videos', on_delete=models.CASCADE,default=True)
-#     description = models.TextField()
-#     video_file = models.FileField(upload_to='videos/', default='')
+#     # Other fields for your model, if any
+#
+#     def __str__(self):
+#         return str(self.story_file)
+
+
+
+
+
+
+
+
+

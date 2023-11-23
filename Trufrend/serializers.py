@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs
 
 
 class ChallengeSerializer(serializers.ModelSerializer):
@@ -44,6 +44,15 @@ class FavoriteProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = '__all__'
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =ContactUs
+        fields ='__all__'
+
+# class StorySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model =Stories
+#         fields ='__all__'
 
 
 

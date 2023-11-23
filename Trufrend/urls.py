@@ -45,6 +45,7 @@ urlpatterns = [
     path('videopack/', VideoPackView.as_view(), name='video-detail'),
     path('add-to-favorite/', AddToFavoriteView.as_view(), name='add-to-favorite'),
     path('remove-from-favorite/<int:pk>/', RemoveFromFavoriteView.as_view(), name='remove-from-favorite'),
+    path('contactUs/', ContactUsCreateAPIView.as_view(), name='contactUs'),
     path('get_user_profile/', get_user_profile.as_view(), name='get_user_profile'),
     # path('verify',verifyuser.as_view(),name='verify')
 ]
