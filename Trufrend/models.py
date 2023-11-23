@@ -62,7 +62,7 @@ class Favorite(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
 class ContactUs(models.Model):
-    phone=models.ForeignKey(Profile, on_delete=models.CASCADE)
+    # phone=models.ForeignKey(Profile, on_delete=models.CASCADE)
     firstname=models.CharField(max_length=100)
     Lastname=models.CharField(max_length=100)
     email= models.CharField(max_length=254)

@@ -242,7 +242,7 @@ class RemoveFromFavoriteView(generics.DestroyAPIView):
 
 class ContactUsCreateAPIView(APIView):
     def post(self, request):
-        phone = "+91" + request.data.get('phone')
+        # phone = "+91" + request.data.get('phone')
         firstname = request.data.get('firstname')
         Lastname = request.data.get('Lastname')
         email = request.data.get('email')
@@ -250,12 +250,12 @@ class ContactUsCreateAPIView(APIView):
         description = request.data.get('description')
 
         # Check if a profile with the given phone number exists
-        profiles = Profile.objects.filter(phone_number=phone)
-
-        if profiles.exists():
+        # profiles = Profile.objects.filter(phone_number=phone)
+        try:
+        # if profiles.exists()
             # Assuming you have a serializer for ContactUs
             contact_serializer = ContactSerializer(data={
-                'phone': profiles.first().id,  # Assuming phone is a ForeignKey in ContactUs
+                # 'phone': profiles.first().id,  # Assuming phone is a ForeignKey in ContactUs
                 'firstname': firstname,
                 'Lastname': Lastname,
                 'email': email,
@@ -268,8 +268,9 @@ class ContactUsCreateAPIView(APIView):
                 return Response({'message': 'Successfully registered your Query'}, status=status.HTTP_201_CREATED)
             else:
                 return Response({'error': contact_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'error': 'Profile does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def get(self,request):
         try:
             contact= ContactUs.objects.all()
@@ -281,9 +282,6 @@ class ContactUsCreateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 
 
 
