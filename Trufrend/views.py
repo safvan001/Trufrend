@@ -242,7 +242,7 @@ class RemoveFromFavoriteView(generics.DestroyAPIView):
 
 class ContactUsCreateAPIView(APIView):
     def post(self, request):
-        # phone = "+91" + request.data.get('phone')
+        phone_no= "+91" + request.data.get('phone_no')
         firstname = request.data.get('firstname')
         Lastname = request.data.get('Lastname')
         email = request.data.get('email')
@@ -250,12 +250,10 @@ class ContactUsCreateAPIView(APIView):
         description = request.data.get('description')
 
         # Check if a profile with the given phone number exists
-        # profiles = Profile.objects.filter(phone_number=phone)
         try:
-        # if profiles.exists()
             # Assuming you have a serializer for ContactUs
             contact_serializer = ContactSerializer(data={
-                # 'phone': profiles.first().id,  # Assuming phone is a ForeignKey in ContactUs
+                'phone_no': phone_no,  # Assuming phone is a ForeignKey in ContactUs
                 'firstname': firstname,
                 'Lastname': Lastname,
                 'email': email,
