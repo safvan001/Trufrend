@@ -16,9 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from .views import *
+from rest_framework import routers
 
+
+# router = routers.DefaultRouter()
+# router.register(r'stories', storiesView, basename='stories')
+app_name="Doctor"
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('',include('Trufrend.urls')),
-    path('Doctor/', include('Doctor.urls')),
+    path('stories/', storiesView.as_view(), name='stories'),
 ]
+
+
