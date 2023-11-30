@@ -75,12 +75,6 @@ class VerifyUserView(APIView):
                 return Response({'error': 'Invalid verification code.'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-# class verifyuser(APIView):
-#     if Profile.phone_number==True:
-#         print("user is available")
-
-
-
 
 
 class UserUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):

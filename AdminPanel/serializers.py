@@ -21,8 +21,8 @@ class SpecialtySerializer(serializers.ModelSerializer):
 
 class DoctorDetailSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    specialties = SpecialtySerializer(many=True)
-    language = LanguageSerializer(many=True)
+    # specialties = SpecialtySerializer(many=True)
+    # language = LanguageSerializer(many=True)
 
     class Meta:
         model = DoctorDetail
@@ -30,15 +30,15 @@ class DoctorDetailSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
-        specialties_data = validated_data.pop('specialties', [])
-        languages_data=validated_data.pop('language',[])
-
+    #     specialties_data = validated_data.pop('specialties', [])
+    #     languages_data=validated_data.pop('language',[])
+    #
         user = User.objects.create(**user_data)
         doctor_detail = DoctorDetail.objects.create(user=user, **validated_data)
-
-        # Add specialties to the doctor_detail instance using the set() method
-        doctor_detail.specialties.set(specialties_data)
-        doctor_detail.language.set(languages_data)
+    #
+    #     # Add specialties to the doctor_detail instance using the set() method
+    #     doctor_detail.specialties.set(specialties_data)
+    #     doctor_detail.language.set(languages_data)
 
         return doctor_detail
 class UploadSerializer(serializers.ModelSerializer):

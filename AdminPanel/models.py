@@ -4,12 +4,12 @@ from django.contrib.auth.models import User
 
 
 class Specialty(models.Model):
-    specialization = models.CharField(max_length=100)
+    specialization = models.CharField(max_length=100,default='')
 
     def __str__(self):
         return self.specialization
 class Language(models.Model):
-    Languages=models.CharField(max_length=100)
+    Languages=models.CharField(max_length=100,default='')
     def __str__(self):
         return self.Languages
 
@@ -28,11 +28,9 @@ class DoctorDetail(models.Model):
     PAN=models.FileField(upload_to='doctor/PAN')
     Aadhaar=models.FileField(upload_to='doctor/Aadhaar')
     GST=models.FileField(upload_to='doctor/GST')
-    specialties = models.ManyToManyField(Specialty)
     Aboutme=models.TextField()
     Education=models.TextField()
     Experience=models.CharField(max_length=100)
-    language=models.ManyToManyField(Language)
     callDuration=models.CharField(max_length=15,default='30 Minutes')
 class Upload(models.Model):
     sample=models.FileField(upload_to='doctor/sample')
