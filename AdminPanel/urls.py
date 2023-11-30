@@ -25,4 +25,6 @@ from rest_framework import routers
 app_name="AdminPanel"
 urlpatterns = [
     path('upload/', SampleUpload.as_view(), name='upload'),
+    path('Doctordetail/',DoctordetailView.as_view(),name='doctor'),
+    path('adddoctor/',AddDoctorView.as_view(),name='adddoctor')
 ]
