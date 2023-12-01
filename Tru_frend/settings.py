@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Trufrend',
     'Doctor',
-    'AdminPanel',
+    'AdminSide',
     'corsheaders',
     'rest_framework'
 ]
@@ -75,6 +75,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Tru_frend.wsgi.application'
+
 
 
 # Database
@@ -114,6 +115,7 @@ LANGUAGE_CODE = 'en-us'
 
 # TIME_ZONE = 'UTC'
 TIME_ZONE = 'Asia/Kolkata'
+
 
 USE_I18N = True
 
