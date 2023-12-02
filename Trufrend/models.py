@@ -60,7 +60,9 @@ class Video(models.Model):
         return self.title
 class Favorite(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-
+class VideoFavourite(models.Model):
+    phone=models.CharField(max_length=15)
+    videoFavour=models.ManyToManyField(Video)
 class ContactUs(models.Model):
     phone_no=models.CharField(max_length=15)
     firstname=models.CharField(max_length=100)

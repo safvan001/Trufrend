@@ -69,11 +69,11 @@ class DoctorData(models.Model):
     Experience = models.CharField(max_length=100,null=True,blank=True)
     callDuration = models.CharField(max_length=15, default='30 Minutes')
 
-    # def save(self, *args, **kwargs):
-    #     # Handle password hashing before saving
-    #     self.password = make_password(self.password)
-    #     super().save(*args, **kwargs)
-    #
+    def save(self, *args, **kwargs):
+        # Handle password hashing before saving
+        self.password = make_password(self.password)
+        super().save(*args, **kwargs)
+
     # def check_password(self, raw_password):
     #     return check_password(raw_password, self.password)
 

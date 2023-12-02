@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from decouple import config
 from twilio.rest import Client
 
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,VideoFavourite
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import status
@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer
+from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer,VideoFavouriteSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -32,7 +32,8 @@ class InitiateVerificationView(APIView):
         ACCOUNT_SID = config('TWILIO_ACCOUNT_SID', default='')
         AUTH_TOKEN = config('TWILIO_AUTH_TOKEN', default='')
         VERIFY_SERVICE_SID = config('TWILIO_VERIFY_SERVICE_SID', default='')
-        phone ="+91" + request.data.get('phone')
+        # country_code=request.data.get('country_code')
+        phone = "+91" + request.data.get('phone')
         profile, created = Profile.objects.get_or_create(phone_number=phone)
         profile.save()
         if not phone:
@@ -201,6 +202,9 @@ class AddToFavoriteView(generics.ListCreateAPIView):
 class RemoveFromFavoriteView(generics.DestroyAPIView):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteProfileSerializer
+class VideoFavouriteView(generics.ListCreateAPIView):
+    queryset = VideoFavourite.objects.all()
+    serializer_class=VideoFavouriteSerializer
 
 # class StoriesView(generics.ListCreateAPIView):
 #     queryset=Stories.objects.all()
