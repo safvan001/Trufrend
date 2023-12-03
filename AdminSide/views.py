@@ -10,6 +10,8 @@ class DoctorDataView(generics.ListCreateAPIView):
     queryset = DoctorData.objects.all()
     serializer_class =  DoctorDataSerializer
 
+
+
 # class DoctordatView(APIView):
 #     def post(self,request):
 #         username=request.data.get('username')
