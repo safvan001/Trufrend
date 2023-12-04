@@ -21,7 +21,7 @@ from .views import *
 app_name="AdminSide"
 
 urlpatterns = [
-    path('Doctordetail/',DoctorDataView.as_view(),name='doctordetail'),
+    path('Doctordetail/',DoctordatView.as_view(),name='doctordetail'),
     path('addlanguage/',AddLanguage.as_view(),name='addlanguage'),
     path('addspeciality/',AddSpecialization.as_view(),name='addspeciality'),
 ]

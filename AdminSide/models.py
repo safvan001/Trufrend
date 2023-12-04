@@ -63,8 +63,6 @@ class DoctorData(models.Model):
     password=models.CharField(max_length=128)
     Dp=models.FileField(upload_to='doctor/Dp',null=True,blank=True)
     DOB = models.DateField(null=True,blank=True)
-    # language=models.ManyToManyField(Languages)
-    # specialization=models.ManyToManyField(Specality)
     CHOICES = (
         ('Male', 'Male'),
         ('Female', 'Female'),

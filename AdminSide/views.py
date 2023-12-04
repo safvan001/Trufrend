@@ -6,9 +6,9 @@ from AdminSide.serializers import  DoctorDataSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
-class DoctorDataView(generics.ListCreateAPIView):
-    queryset = DoctorData.objects.all()
-    serializer_class =  DoctorDataSerializer
+# class DoctorDataView(generics.ListCreateAPIView):
+#     queryset = DoctorData.objects.all()
+#     serializer_class =  DoctorDataSerializer
 
 
 class AddLanguage(APIView):
@@ -53,6 +53,7 @@ class AddSpecialization(APIView):
 
             if not specality_ids:
                 return Response({'error': 'specality_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
             if not username:
                 return Response({'error': 'username provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -80,41 +81,66 @@ class AddSpecialization(APIView):
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+from django.db import IntegrityError
 
 
+class DoctordatView(generics.ListAPIView):
+    queryset = DoctorData.objects.all()
+    serializer_class =  DoctorDataSerializer
+    def post(self,request):
+        username=request.data.get('username')
+        password=request.data.get('password')
+        DOB=request.data.get('DOB')
+        Dp=request.data.get('Dp')
+        Gender=request.data.get('Gender')
+        Language=request.data.get('Language',[])
+        Specialization=request.data.get('Specialization',[])
+        CurrentAddress=request.data.get('CurrentAddress')
+        permanentAddress=request.data.get('permanentAddress')
+        phone=request.data.get('phone')
+        Degrees=request.data.get('Degrees')
+        Diplomas=request.data.get('Diplomas')
+        References=request.data.get('References')
+        Certificates=request.data.get('Certificates')
+        RCI=request.data.get('RCI')
+        PAN=request.data.get('PAN')
+        Aadhaar=request.data.get('Aadhaar')
+        GST=request.data.get('GST')
+        Aboutme=request.data.get('Aboutme')
+        Education=request.data.get('Education')
+        Experience=request.data.get('Experience')
+        callDuration=request.data.get('callDuration')
+        try:
 
-
-
-
-
-
-# class DoctordatView(APIView):
-#     def post(self,request):
-#         username=request.data.get('username')
-#         password=request.data.get('password')
-#         DOB=request.data.get('DOB')
-#         CurrentAddress=request.data.get('CurrentAddress')
-#         permanentAddress=request.data.get('permanentAddress')
-#         phone=request.data.get('phone')
-#         Degrees=request.data.get('Degrees')
-#         Diplomas=request.data.get('Diplomas')
-#         References=request.data.get('References')
-#         Certificates=request.data.get('Certificates')
-#         RCI=request.data.get('RCI')
-#         PAN=request.data.get('PAN')
-#         Aadhaar=request.data.get('Aadhaar')
-#         GST=request.data.get('GST')
-#         Aboutme=request.data.get('Aboutme')
-#         Education=request.data.get('Education')
-#         Experience=request.data.get('Experience')
-#         callDuration=request.data.get('callDuration')
-#         try:
-#             DoctorData.objects.create(username=username,password=password,DOB=DOB,CurrentAddress=CurrentAddress,
-#                                       permanentAddress=permanentAddress,phone=phone,Degrees=Degrees,Diplomas= Diplomas,
-#                                       References=References,Certificates=Certificates,RCI=RCI,PAN=PAN,Aadhaar=Aadhaar,
-#                                       GST=GST,Aboutme=Aboutme,Education=Education,Experience=Experience,callDuration=callDuration)
-#             DoctorData.save()
-#         except:
-#             return Response({'error': 'Wrong Input'}, status=status.HTTP_404_NOT_FOUND)
+            # DoctorData.save()
+            doctor = DoctorData.objects.create(
+                username=username,
+                password=password,
+                phone=phone,
+                DOB=DOB,Dp=Dp,
+                Gender=Gender,
+                CurrentAddress=CurrentAddress,
+                permanentAddress=permanentAddress,
+                Degrees=Degrees,Diplomas=Diplomas,
+                References=References,
+                Certificates=Certificates,
+                RCI=RCI,PAN=PAN,
+                Aadhaar=Aadhaar,
+                GST=GST,
+                Aboutme=Aboutme,
+                Education=Education,
+                Experience=Experience,
+                callDuration=callDuration
+            )
+            doctor.Language.add(*Language)
+            doctor.Specialization.add(*Specialization)
+            doctor.save()
+            return Response({'message': 'Doctor data created successfully.'}, status=status.HTTP_201_CREATED)
+        # except IntegrityError:
+        #     return Response({'error': 'Duplicate entry. Doctor with the same phone number already exists.'},
+        #                     status=status.HTTP_409_CONFLICT)
+        except Exception as e:
+            print(str(e))  # Log the exception for debugging
+            return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # Create your views here.

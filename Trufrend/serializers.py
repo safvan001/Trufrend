@@ -17,7 +17,7 @@ class VideoSerializer(serializers.ModelSerializer):
         model = Video
         fields = '__all__'
 class ProfileSerializer(serializers.ModelSerializer):
-    # challenges=ChallengeSerializer(many=True)
+    challenges=ChallengeSerializer(many=True)
     videoFavour = VideoSerializer(many=True)
     class Meta:
         model = Profile
