@@ -42,6 +42,7 @@ urlpatterns = [
     # path('videos/<str:title>/',  VideoList.as_view(), name='video-list-create'),
     # path('video_packs/', VideoPackView.as_view(), name='video_pack_list'),
     path('Fvideo/',AddVideoFavouriteView.as_view(),name='Fvideo'),
+    path('Fremove/',DeleteVideoFavouriteView.as_view(),name='Fremove'),
     path('videotitle',Videotitle.as_view(),name='videotitle'),
     path('videopack/', VideoPackView.as_view(), name='video-detail'),
     path('add-to-favorite/', AddToFavoriteView.as_view(), name='add-to-favorite'),

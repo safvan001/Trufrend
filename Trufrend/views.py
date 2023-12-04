@@ -256,6 +256,32 @@ class AddVideoFavouriteView(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class DeleteVideoFavouriteView(APIView):
+    def post(self, request):
+        try:
+            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            video_ids = request.data.get('video_ids', [])
+
+            if not phone or not video_ids:
+                return Response({'error': 'Invalid input data.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Get the profile object
+            try:
+                profile = Profile.objects.get(phone_number=phone)
+            except Profile.DoesNotExist:
+                return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Validate video IDs
+            valid_video_ids = [video_id for video_id in video_ids if Video.objects.filter(id=video_id).exists()]
+
+            # Remove the specified videos from the profile's videoFavour
+            profile.videoFavour.remove(*valid_video_ids)
+
+            return Response({'message': 'VideoFavourite removed from the profile successfully.'}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(str(e))  # Log the exception for debugging
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
