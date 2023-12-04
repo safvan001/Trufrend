@@ -49,6 +49,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Permis
 #
 #     def __str__(self):
 #         return self.username
+
 class Languages(models.Model):
     languages=models.CharField(max_length=100)
     def __str__(self):
@@ -64,9 +65,19 @@ class DoctorData(models.Model):
     DOB = models.DateField(null=True,blank=True)
     # language=models.ManyToManyField(Languages)
     # specialization=models.ManyToManyField(Specality)
+    CHOICES = (
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Trans', 'Trans'),
+    )
+    Gender=models.CharField(max_length=100,choices=CHOICES,blank=True,default='Male')
+    Language=models.ManyToManyField(Languages)
+    Specialization=models.ManyToManyField(Specality)
     CurrentAddress = models.TextField(null=True,blank=True)
     permanentAddress = models.TextField(null=True,blank=True)
+    name=models.CharField(max_length=100,blank=True)
     phone = models.CharField(max_length=18)
+    Email=models.EmailField(blank=True)
     Degrees = models.FileField(upload_to='doctor/certificate',null=True,blank=True)
     Diplomas = models.FileField(upload_to='doctor/diploma',null=True,blank=True)
     References = models.TextField(null=True,blank=True)

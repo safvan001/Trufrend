@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from decouple import config
 from twilio.rest import Client
 
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,VideoFavourite
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import status
@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer,VideoFavouriteSerializer
+from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -158,22 +158,24 @@ from rest_framework.decorators import action
 from rest_framework import status, parsers
 
 
-class ProfileListCreateAPIView(generics.ListAPIView):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+class ProfileListCreateAPIView(APIView):
+    # queryset = Profile.objects.all()
+    # serializer_class = ProfileSerializer
 
     def post(self, request):
-        phone = "+91" + request.data.get('phone')
+        phone = "+91"+request.data.get('phone')
         nick_name = request.data.get('nick_name')
         name = request.data.get('name')
         dp=request.data.get('dp')
         challenges=request.data.get('challenges',[])
+        videoFavour=request.data.get('videoFavour',[])
 
         try:
             profile = Profile.objects.get(phone_number=phone)
             profile.nick_name = nick_name
             profile.name = name
             profile.challenges.add(*challenges)
+            profile.videoFavour.add(*videoFavour)
 
             # If an image is provided, save it to the 'dp' field
             if dp:
@@ -184,6 +186,19 @@ class ProfileListCreateAPIView(generics.ListAPIView):
             return Response({'message': 'User profile updated successfully'}, status=status.HTTP_200_OK)
         except Profile.DoesNotExist:
             return Response({'error': 'Profile Does not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def get(self,request):
+        try:
+            profile= Profile.objects.all()
+
+            # Serialize the data
+            serializer = ProfileSerializer(profile, many=True)
+
+            # Return the serialized data as a JSON response
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 class VideoViewSet(viewsets.ModelViewSet):
@@ -202,9 +217,52 @@ class AddToFavoriteView(generics.ListCreateAPIView):
 class RemoveFromFavoriteView(generics.DestroyAPIView):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteProfileSerializer
-class VideoFavouriteView(generics.ListCreateAPIView):
-    queryset = VideoFavourite.objects.all()
-    serializer_class=VideoFavouriteSerializer
+
+class AddVideoFavouriteView(APIView):
+    def post(self,request):
+        try:
+            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            video_ids = request.data.get('video_ids', [])
+            # Default to an empty list if not provided
+
+            if not video_ids:
+                return Response({'error': 'video_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if the profile_id is a valid number
+            if not phone:
+                return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Get the profile object
+            try:
+                profile = Profile.objects.get(phone_number=phone)
+            except Profile.DoesNotExist:
+                return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Validate challenge IDs and ensure uniqueness
+            valid_video = []
+            for video_id in video_ids:
+                try:
+                    video = Video.objects.get(id=video_id)
+                    if video not in valid_video:  # Ensure uniqueness
+                        valid_video.append(video)
+                except Video.DoesNotExist:
+                    return Response({'error': f'Video with ID {video_id} not found.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            # Add the unique challenges to the profile using the many-to-many relationship
+            profile.videoFavour.add(*valid_video)
+
+            return Response({'message': 'VideoFavourite added to the profile successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(str(e))  # Log the exception for debugging
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+# class VideoFavouriteView(generics.ListCreateAPIView):
+#     queryset = VideoFavourite.objects.all()
+#     serializer_class=VideoFavouriteSerializer
 
 # class StoriesView(generics.ListCreateAPIView):
 #     queryset=Stories.objects.all()

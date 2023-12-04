@@ -1,13 +1,24 @@
 from rest_framework import serializers
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,VideoFavourite
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs
 
 
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
         fields = '__all__'
+class VideoPackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VideoPack
+        fields = '__all__'
+
+class VideoSerializer(serializers.ModelSerializer):
+    video_files=VideoPackSerializer(many=True)
+    class Meta:
+        model = Video
+        fields = '__all__'
 class ProfileSerializer(serializers.ModelSerializer):
     # challenges=ChallengeSerializer(many=True)
+    videoFavour = VideoSerializer(many=True)
     class Meta:
         model = Profile
         fields = '__all__'
@@ -30,16 +41,7 @@ class DpSerializer(serializers.ModelSerializer):
         fields= ('dp',)
 
 
-class VideoPackSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VideoPack
-        fields = '__all__'
 
-class VideoSerializer(serializers.ModelSerializer):
-    video_files=VideoPackSerializer(many=True)
-    class Meta:
-        model = Video
-        fields = '__all__'
 class FavoriteProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
@@ -48,12 +50,7 @@ class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model =ContactUs
         fields ='__all__'
-class VideoFavouriteSerializer(serializers.ModelSerializer):
-    videoFavour=VideoSerializer(many=True)
-    # videoFavour = serializers.PrimaryKeyRelatedField(queryset=Video.objects.all(), many=True)
-    class Meta:
-        model=VideoFavourite
-        fields='__all__'
+
 
     # def create(self, validated_data):
     #     Favour_data = validated_data.pop('Favour_data',[])

@@ -29,23 +29,12 @@ class Challenge(models.Model):
     # challenges=models.CharField(max_length=100)
     def __str__(self):
         return self.challenges
-
-class Profile(models.Model):
-    phone_number = models.CharField(max_length=15,default=True)
-    dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True)
-    name = models.CharField(max_length=100)
-    nick_name = models.CharField(max_length=50)
-    challenges = models.ManyToManyField(Challenge)
-
-    def __str__(self):
-        return self.phone_number
 class VideoPack(models.Model):
     video_file = models.FileField(upload_to='videos/',default=1)
     subtitle=models.CharField(max_length=200,default=' ')
     description = models.TextField(default='')
     videolen=models.CharField(max_length=100,default='10')
     image=models.ImageField(upload_to='img/videobanner', null=True, blank=True)
-
 
     def __str__(self):
         return basename(str(self.video_file))
@@ -58,11 +47,21 @@ class Video(models.Model):
     # Add other fields if necessary
     def __str__(self):
         return self.title
+
+class Profile(models.Model):
+    phone_number = models.CharField(max_length=15,default='')
+    dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True)
+    name = models.CharField(max_length=100)
+    nick_name = models.CharField(max_length=50)
+    challenges = models.ManyToManyField(Challenge)
+    videoFavour = models.ManyToManyField(Video)
+
+    def __str__(self):
+        return self.phone_number
+
 class Favorite(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-class VideoFavourite(models.Model):
-    phone=models.CharField(max_length=15)
-    videoFavour=models.ManyToManyField(Video)
+
 class ContactUs(models.Model):
     phone_no=models.CharField(max_length=15)
     firstname=models.CharField(max_length=100)

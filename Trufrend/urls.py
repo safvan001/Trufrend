@@ -41,13 +41,13 @@ urlpatterns = [
     path('usercount/',UserCount.as_view(),name='usecount'),
     # path('videos/<str:title>/',  VideoList.as_view(), name='video-list-create'),
     # path('video_packs/', VideoPackView.as_view(), name='video_pack_list'),
+    path('Fvideo/',AddVideoFavouriteView.as_view(),name='Fvideo'),
     path('videotitle',Videotitle.as_view(),name='videotitle'),
     path('videopack/', VideoPackView.as_view(), name='video-detail'),
     path('add-to-favorite/', AddToFavoriteView.as_view(), name='add-to-favorite'),
     path('remove-from-favorite/<int:pk>/', RemoveFromFavoriteView.as_view(), name='remove-from-favorite'),
     path('contactUs/', ContactUsCreateAPIView.as_view(), name='contactUs'),
     path('get_user_profile/', get_user_profile.as_view(), name='get_user_profile'),
-    path('Fvideo/',VideoFavouriteView.as_view(),name='verify')
 ]
 urlpatterns += router.urls
 if settings.DEBUG:
