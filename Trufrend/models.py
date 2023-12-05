@@ -50,7 +50,7 @@ class Video(models.Model):
 
 class Profile(models.Model):
     phone_number = models.CharField(max_length=15,default='')
-    dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True)
+    dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True,default="img/profile_pictures/userimage.png")
     name = models.CharField(max_length=100)
     nick_name = models.CharField(max_length=50)
     challenges = models.ManyToManyField(Challenge)
