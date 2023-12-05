@@ -19,7 +19,7 @@ import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework import generics
+from rest_framework import generics,mixins
 from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -28,7 +28,7 @@ from django.conf import settings
 
 class InitiateVerificationView(APIView):
     def post(self, request):
-        print(request.data)
+        #print(request.data)
         ACCOUNT_SID = config('TWILIO_ACCOUNT_SID', default='')
         AUTH_TOKEN = config('TWILIO_AUTH_TOKEN', default='')
         VERIFY_SERVICE_SID = config('TWILIO_VERIFY_SERVICE_SID', default='')
@@ -54,7 +54,7 @@ class VerifyUserView(APIView):
         ACCOUNT_SID = config('TWILIO_ACCOUNT_SID', default='')
         AUTH_TOKEN = config('TWILIO_AUTH_TOKEN', default='')
         VERIFY_SERVICE_SID = config('TWILIO_VERIFY_SERVICE_SID', default='')
-        print(request.data)
+        #print(request.data)
         phone = "+91" + request.data.get('phone')
         code = request.data.get('code')
         print(phone)

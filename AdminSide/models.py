@@ -51,11 +51,11 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Permis
 #         return self.username
 
 class Languages(models.Model):
-    languages=models.CharField(max_length=100)
+    languages=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
         return self.languages
 class Specality(models.Model):
-    specialization=models.CharField(max_length=100)
+    specialization=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
         return self.specialization
 class DoctorData(models.Model):
