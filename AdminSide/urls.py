@@ -24,8 +24,8 @@ urlpatterns = [
     path('Doctordetail/',DoctordatView.as_view(),name='doctordetail'),
     path('addlanguage/',AddLanguage.as_view(),name='addlanguage'),
     path('addspeciality/',AddSpecialization.as_view(),name='addspeciality'),
-    path('language/',LanguageView.as_view(),name='language'),
-    path('language/<int:pk>/',LanguageUpdateanddeletView.as_view(),name='language'),
-    path('specialization/',SpecializationView.as_view(),name='specialization'),
-    path('specialization/<int:pk>/',SpecializationUpdateandDeleteView.as_view(),name='upspecialization')
+    # path('language/',LanguageView.as_view(),name='language'),
+    # path('language/<int:pk>/',LanguageUpdateanddeletView.as_view(),name='language'),
+    # path('specialization/',SpecializationView.as_view(),name='specialization'),
+    # path('specialization/<int:pk>/',SpecializationUpdateandDeleteView.as_view(),name='upspecialization')
 ]

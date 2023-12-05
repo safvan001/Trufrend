@@ -50,14 +50,14 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Permis
 #     def __str__(self):
 #         return self.username
 
-class Languages(models.Model):
-    languages=models.CharField(max_length=100,null=True,blank=True)
-    def __str__(self):
-        return self.languages
-class Specality(models.Model):
-    specialization=models.CharField(max_length=100,null=True,blank=True)
-    def __str__(self):
-        return self.specialization
+# class Languages(models.Model):
+#     languages=models.CharField(max_length=100,null=True,blank=True)
+#     def __str__(self):
+#         return self.languages
+# class Specality(models.Model):
+#     specialization=models.CharField(max_length=100,null=True,blank=True)
+#     def __str__(self):
+#         return self.specialization
 class DoctorData(models.Model):
     username=models.CharField(max_length=100)
     password=models.CharField(max_length=128)
@@ -69,8 +69,8 @@ class DoctorData(models.Model):
         ('Trans', 'Trans'),
     )
     Gender=models.CharField(max_length=100,choices=CHOICES,null=True,blank=True,default='Male')
-    Language=models.ManyToManyField(Languages)
-    Specialization=models.ManyToManyField(Specality)
+    # Language=models.ManyToManyField(Languages)
+    # Specialization=models.ManyToManyField(Specality)
     CurrentAddress = models.TextField(null=True,blank=True)
     permanentAddress = models.TextField(null=True,blank=True)
     name=models.CharField(max_length=100,blank=True,null=True)

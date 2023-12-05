@@ -5,7 +5,14 @@ from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework import generics
 from django.utils import timezone
+from rest_framework.views import APIView
+from AdminSide.models import DoctorData
 # Create your views here.
+
+
+# class DoctorLoginView(APIView):
+#     username=request.get.data('user')
+
 class storiesView(generics.ListCreateAPIView):
     queryset = Stories.objects.all()
     serializer_class = StoriesSerializer

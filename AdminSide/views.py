@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics,mixins
-from AdminSide.models import DoctorData,Languages,Specality
+from AdminSide.models import DoctorData       #Languages,Specality
 from rest_framework.views import APIView
-from AdminSide.serializers import  DoctorDataSerializer,LanguageSerializer,SpecializationSerializer
+from AdminSide.serializers import  DoctorDataSerializer    #,LanguageSerializer,SpecializationSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -93,8 +93,8 @@ class DoctordatView(generics.ListAPIView):
         DOB=request.data.get('DOB')
         Dp=request.data.get('Dp')
         Gender=request.data.get('Gender')
-        Language=request.data.get('Language', [])
-        Specialization=request.data.get('Specialization',[])
+        # Language=request.data.get('Language', [])
+        # Specialization=request.data.get('Specialization',[])
         CurrentAddress=request.data.get('CurrentAddress')
         permanentAddress=request.data.get('permanentAddress')
         name=request.data.get('name')
@@ -139,8 +139,8 @@ class DoctordatView(generics.ListAPIView):
                 Experience=Experience,
                 callDuration=callDuration
             )
-            doctor.Language.add(*Language)
-            doctor.Specialization.add(*Specialization)
+            # doctor.Language.add(*Language)
+            # doctor.Specialization.add(*Specialization)
             doctor.save()
             return Response({'message': 'Doctor data created successfully.'}, status=status.HTTP_201_CREATED)
         # except IntegrityError:
@@ -149,39 +149,39 @@ class DoctordatView(generics.ListAPIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-class LanguageView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
-    queryset = Languages.objects.all()
-    serializer_class = LanguageSerializer
-    def get(self,request):
-        return self.list(request)
-    def post(self,request):
-        return self.create(request)
-
-class LanguageUpdateanddeletView(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
-    queryset=Languages.objects.all()
-    serializer_class = LanguageSerializer
-    def get(self,request,pk):
-        return self.retrieve(request,pk)
-    def put(self,request,pk):
-        return self.update(request,pk)
-    def delete(self,request,pk):
-        return self.destroy(request,pk)
-class SpecializationView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
-    queryset = Specality.objects.all()
-    serializer_class = SpecializationSerializer
-    def get(self,request):
-        return self.list(request)
-    def post(self,request):
-        return self.create(request)
-class SpecializationUpdateandDeleteView(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
-    queryset = Specality.objects.all()
-    serializer_class = SpecializationSerializer
-    def get(self,request,pk):
-        return self.retrieve(request,pk)
-    def put(self,request,pk):
-        return self.update(request,pk)
-    def delete(self,request,pk):
-        return self.destroy(request,pk)
+# class LanguageView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
+#     queryset = Languages.objects.all()
+#     serializer_class = LanguageSerializer
+#     def get(self,request):
+#         return self.list(request)
+#     def post(self,request):
+#         return self.create(request)
+#
+# class LanguageUpdateanddeletView(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
+#     queryset=Languages.objects.all()
+#     serializer_class = LanguageSerializer
+#     def get(self,request,pk):
+#         return self.retrieve(request,pk)
+#     def put(self,request,pk):
+#         return self.update(request,pk)
+#     def delete(self,request,pk):
+#         return self.destroy(request,pk)
+# class SpecializationView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
+#     queryset = Specality.objects.all()
+#     serializer_class = SpecializationSerializer
+#     def get(self,request):
+#         return self.list(request)
+#     def post(self,request):
+#         return self.create(request)
+# class SpecializationUpdateandDeleteView(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
+#     queryset = Specality.objects.all()
+#     serializer_class = SpecializationSerializer
+#     def get(self,request,pk):
+#         return self.retrieve(request,pk)
+#     def put(self,request,pk):
+#         return self.update(request,pk)
+#     def delete(self,request,pk):
+#         return self.destroy(request,pk)
 
 
 
