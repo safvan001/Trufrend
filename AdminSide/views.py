@@ -93,11 +93,13 @@ class DoctordatView(generics.ListAPIView):
         DOB=request.data.get('DOB')
         Dp=request.data.get('Dp')
         Gender=request.data.get('Gender')
-        Language=request.data.get('Language',[])
+        Language=request.data.get('Language', [])
         Specialization=request.data.get('Specialization',[])
         CurrentAddress=request.data.get('CurrentAddress')
         permanentAddress=request.data.get('permanentAddress')
+        name=request.data.get('name')
         phone=request.data.get('phone')
+        Email=request.data.get('Email')
         Degrees=request.data.get('Degrees')
         Diplomas=request.data.get('Diplomas')
         References=request.data.get('References')
@@ -117,14 +119,19 @@ class DoctordatView(generics.ListAPIView):
                 username=username,
                 password=password,
                 phone=phone,
-                DOB=DOB,Dp=Dp,
+                DOB=DOB,
+                Dp=Dp,
                 Gender=Gender,
                 CurrentAddress=CurrentAddress,
                 permanentAddress=permanentAddress,
-                Degrees=Degrees,Diplomas=Diplomas,
+                name=name,
+                Email=Email,
+                Degrees=Degrees,
+                Diplomas=Diplomas,
                 References=References,
                 Certificates=Certificates,
-                RCI=RCI,PAN=PAN,
+                RCI=RCI,
+                PAN=PAN,
                 Aadhaar=Aadhaar,
                 GST=GST,
                 Aboutme=Aboutme,

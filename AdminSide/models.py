@@ -68,12 +68,12 @@ class DoctorData(models.Model):
         ('Female', 'Female'),
         ('Trans', 'Trans'),
     )
-    Gender=models.CharField(max_length=100,choices=CHOICES,blank=True,default='Male')
+    Gender=models.CharField(max_length=100,choices=CHOICES,null=True,blank=True,default='Male')
     Language=models.ManyToManyField(Languages)
     Specialization=models.ManyToManyField(Specality)
     CurrentAddress = models.TextField(null=True,blank=True)
     permanentAddress = models.TextField(null=True,blank=True)
-    name=models.CharField(max_length=100,blank=True)
+    name=models.CharField(max_length=100,blank=True,null=True)
     phone = models.CharField(max_length=18)
     Email=models.EmailField(blank=True)
     Degrees = models.FileField(upload_to='doctor/certificate',null=True,blank=True)
