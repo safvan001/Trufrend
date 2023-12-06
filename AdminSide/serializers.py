@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from AdminSide.models import DoctorData     #,Languages,Specality
+from AdminSide.models import DoctorData #Languages,Specality
 
 # class LanguageSerializer(serializers.ModelSerializer):
 #     class Meta:

@@ -115,7 +115,7 @@ LANGUAGE_CODE = 'en-us'
 
 # TIME_ZONE = 'UTC'
 TIME_ZONE = 'Asia/Kolkata'
-
+AUTH_USER_MODEL = 'AdminSide.DoctorData'
 
 USE_I18N = True
 

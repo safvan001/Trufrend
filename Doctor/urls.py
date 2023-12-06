@@ -25,6 +25,7 @@ from rest_framework import routers
 app_name="Doctor"
 urlpatterns = [
     path('stories/', storiesView.as_view(), name='stories'),
+    path('doctorlogin/',DoctorLoginView.as_view(),name='doctorlogin'),
 ]
 
 

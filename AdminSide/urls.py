@@ -22,6 +22,7 @@ app_name="AdminSide"
 
 urlpatterns = [
     path('Doctordetail/',DoctordatView.as_view(),name='doctordetail'),
+    path('Doctordetail/<str:username>/', DoctorDataDetailView.as_view(), name='Doctordetail'),
     path('addlanguage/',AddLanguage.as_view(),name='addlanguage'),
     path('addspeciality/',AddSpecialization.as_view(),name='addspeciality'),
     # path('language/',LanguageView.as_view(),name='language'),

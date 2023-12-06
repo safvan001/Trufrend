@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics,mixins
-from AdminSide.models import DoctorData       #Languages,Specality
+from AdminSide.models import DoctorData, Languages,Specality
 from rest_framework.views import APIView
-from AdminSide.serializers import  DoctorDataSerializer    #,LanguageSerializer,SpecializationSerializer
+from AdminSide.serializers import  DoctorDataSerializer #LanguageSerializer,SpecializationSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -149,6 +149,25 @@ class DoctordatView(generics.ListAPIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class DoctorDataDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DoctorData.objects.all()
+    serializer_class = DoctorDataSerializer
+    lookup_field = 'username'  # Use 'username' as the lookup field
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response({'message': 'Doctor data updated successfully.'})
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({'message': 'Doctor data deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 # class LanguageView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
 #     queryset = Languages.objects.all()
 #     serializer_class = LanguageSerializer
