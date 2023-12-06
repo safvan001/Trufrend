@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics,mixins
-from AdminSide.models import DoctorData, Languages,Specality
+from AdminSide.models import DoctorData #Languages,Specality
 from rest_framework.views import APIView
 from AdminSide.serializers import  DoctorDataSerializer #LanguageSerializer,SpecializationSerializer
 from rest_framework.response import Response

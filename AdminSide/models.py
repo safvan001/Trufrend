@@ -4,6 +4,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Permis
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.utils import timezone
 
 # class DoctorDataManager(BaseUserManager):
 #     def create_user(self, username, password=None, **extra_fields):
@@ -20,14 +21,20 @@ from django.db import models
 #         extra_fields.setdefault('is_superuser', True)
 #
 #         return self.create_user(username, password, **extra_fields)
-class Languages(models.Model):
-    languages=models.CharField(max_length=100,null=True,blank=True)
+# class Languages(models.Model):
+#     languages=models.CharField(max_length=100,null=True,blank=True)
+#     def __str__(self):
+#         return self.languages
+# class Specality(models.Model):
+#     specialization=models.CharField(max_length=100,null=True,blank=True)
+#     def __str__(self):
+#         return self.specialization
+class Stories(models.Model):
+    story_file = models.FileField(upload_to='stories/')
+    created_at = models.DateTimeField(default=timezone.now)
+
     def __str__(self):
-        return self.languages
-class Specality(models.Model):
-    specialization=models.CharField(max_length=100,null=True,blank=True)
-    def __str__(self):
-        return self.specialization
+        return str(self.story_file)
 class DoctorDataManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
@@ -61,6 +68,7 @@ class DoctorData(AbstractBaseUser, PermissionsMixin):
     name=models.CharField(max_length=100,blank=True,null=True)
     phone = models.CharField(max_length=18,default='')
     Email=models.EmailField(blank=True)
+    stories = models.ForeignKey(Stories, on_delete=models.SET_NULL, null=True, blank=True)
     Degrees = models.FileField(upload_to='doctor/certificate',null=True,blank=True)
     Diplomas = models.FileField(upload_to='doctor/diploma',null=True,blank=True)
     References = models.TextField(null=True,blank=True)
