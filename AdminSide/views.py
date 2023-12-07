@@ -180,6 +180,7 @@ class StoryView(generics.ListCreateAPIView):
     #     return self.list(request, *args, **kwargs)
 class StoryCreateView(APIView):
     def post(self, request):
+
         username = request.data.get('username')
         story = request.data.get('story')
 

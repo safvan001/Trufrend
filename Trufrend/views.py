@@ -6,6 +6,7 @@ from decouple import config
 from twilio.rest import Client
 
 from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs
+from AdminSide.models import DoctorData
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import status
@@ -282,6 +283,78 @@ class DeleteVideoFavouriteView(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class AddDoctorFavourite(APIView):
+    def post(self,request):
+        try:
+            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            doctor_ids = request.data.get('doctor_ids', [])
+            # Default to an empty list if not provided
+
+            if not doctor_ids:
+                return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if the profile_id is a valid number
+            if not phone:
+                return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Get the profile object
+            try:
+                profile = Profile.objects.get(phone_number=phone)
+            except Profile.DoesNotExist:
+                return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Validate challenge IDs and ensure uniqueness
+            valid_doctor = []
+            for doctor_id in doctor_ids:
+                try:
+                    doctor = DoctorData.objects.get(id=doctor_id)
+                    if doctor not in valid_doctor:  # Ensure uniqueness
+                        valid_doctor.append(doctor)
+                except DoctorData.DoesNotExist:
+                    return Response({'error': f'Doctor with ID {doctor_id} not found.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            # Add the unique challenges to the profile using the many-to-many relationship
+            profile.doctorFavour.add(*valid_doctor)
+
+            return Response({'message': 'DoctorFavourite added to the profile successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(str(e))  # Log the exception for debugging
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class RemoveDoctorFavourite(APIView):
+    def post(self, request):
+        try:
+            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            doctor_ids = request.data.get('doctor_ids', [])
+
+            if not doctor_ids:
+                return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            if not phone:
+                return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                profile = Profile.objects.get(phone_number=phone)
+            except Profile.DoesNotExist:
+                return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Validate doctor IDs and ensure they exist in the favorites list
+            for doctor_id in doctor_ids:
+                try:
+                    doctor = DoctorData.objects.get(id=doctor_id)
+                    if doctor in profile.doctorFavour.all():
+                        profile.doctorFavour.remove(doctor)
+                    else:
+                        return Response({'error': f'Doctor with ID {doctor_id} is not in favorites.'},
+                                        status=status.HTTP_400_BAD_REQUEST)
+                except DoctorData.DoesNotExist:
+                    return Response({'error': f'Doctor with ID {doctor_id} not found.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({'message': 'Doctor removed from favorites successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(str(e))  # Log the exception for debugging
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -362,6 +435,7 @@ class ContactUsCreateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 

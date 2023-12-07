@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs
-
+from AdminSide.models import DoctorData
+from AdminSide.serializers import  DoctorDataSerializer
 
 class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,6 +20,7 @@ class VideoSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     challenges=ChallengeSerializer(many=True)
     videoFavour = VideoSerializer(many=True)
+    doctorFavour=DoctorDataSerializer(many=True)
     class Meta:
         model = Profile
         fields = '__all__'

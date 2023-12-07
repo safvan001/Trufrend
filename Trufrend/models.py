@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 from multiselectfield import MultiSelectField
 from os.path import basename
+from AdminSide.models import DoctorData
 
 CHOICES = (
         ('Anxiety', 'Anxiety'),
@@ -55,6 +56,7 @@ class Profile(models.Model):
     nick_name = models.CharField(max_length=50)
     challenges = models.ManyToManyField(Challenge)
     videoFavour = models.ManyToManyField(Video)
+    doctorFavour=models.ManyToManyField(DoctorData)
 
     def __str__(self):
         return self.phone_number
