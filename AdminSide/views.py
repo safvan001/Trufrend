@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from rest_framework import generics,mixins
-from AdminSide.models import DoctorData #Languages,Specality
+from AdminSide.models import DoctorData,Stories #Languages,Specality
 from rest_framework.views import APIView
-from AdminSide.serializers import  DoctorDataSerializer #LanguageSerializer,SpecializationSerializer
+from AdminSide.serializers import  DoctorDataSerializer,StoriesSerializer #LanguageSerializer,SpecializationSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from django.utils import timezone
 
 # class DoctorDataView(generics.ListCreateAPIView):
 #     queryset = DoctorData.objects.all()
@@ -149,25 +150,89 @@ class DoctordatView(generics.ListAPIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-class DoctorDataDetailView(generics.RetrieveUpdateDestroyAPIView):
+class DoctorUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DoctorData.objects.all()
     serializer_class = DoctorDataSerializer
-    lookup_field = 'username'  # Use 'username' as the lookup field
+    lookup_field = 'username'
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({'message': 'Doctor data updated successfully.'})
+class StoryView(generics.ListCreateAPIView):
+    queryset = Stories.objects.all()
+    serializer_class = StoriesSerializer
 
-    def perform_update(self, serializer):
-        serializer.save()
+    # def get(self, request, *args, **kwargs):
+    #     # Get the current time
+    #     current_time = timezone.now()
+    #
+    #     # Iterate over all Stories instances
+    #     for story in Stories.objects.all():
+    #         # Access the created_at attribute
+    #         created_at = story.created_at
+    #
+    #         # Define the threshold (e.g., 2 minutes)
+    #         threshold = timezone.timedelta(minutes=2)
+    #
+    #         # Check if the story is older than the threshold
+    #         if current_time > created_at + threshold:
+    #             # Delete the story if it's older than the threshold
+    #             story.story_file.delete()
+    #             story.delete()
+    #
+    #     return self.list(request, *args, **kwargs)
+class StoryCreateView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        story = request.data.get('story')
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({'message': 'Doctor data deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+        try:
+            doctor = DoctorData.objects.get(username=username)
+            sto=Stories.objects.create(doctor=doctor, story_file=story)
+
+            serializer = StoriesSerializer(sto)
+            serialized_data = serializer.data
+
+            # Include the serialized data in the response
+            response_data = {
+                'detail': 'Story added successful',
+                'story': serialized_data,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+            # doctor.save()
+            # return Response({'detail': 'Story created successfully.'}, status=status.HTTP_201_CREATED)
+        except DoctorData.DoesNotExist:
+            return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+    # def get(self, request, *args, **kwargs):
+    #     # Call the list method to return the list of stories
+    #     return self.list(request, *args, **kwargs)
+#
+#     def delete_old_stories(self):
+#         # Get the current time
+#         current_time = timezone.now()
+#
+#         # Iterate over all Stories instances
+#         for story in Stories.objects.all():
+#             # Access the created_at attribute
+#             created_at = story.created_at
+#
+#             # Define the threshold (e.g., 2 minutes)
+#             threshold = timezone.timedelta(minutes=3)
+#
+#             # Check if the story is older than the threshold
+#             if current_time > created_at + threshold:
+#                 # Delete the story if it's older than the threshold
+#                 story.story_file.delete()
+#                 story.delete()
+#
+#     def list(self, request, *args, **kwargs):
+#         # Delete old stories
+#         self.delete_old_stories()
+#
+#         # Return the list of stories
+#         queryset = Stories.objects.all()
+#         serializer = StoriesSerializer(queryset, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
 # class LanguageView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
 #     queryset = Languages.objects.all()
 #     serializer_class = LanguageSerializer

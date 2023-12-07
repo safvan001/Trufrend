@@ -26,6 +26,7 @@ app_name="Doctor"
 urlpatterns = [
     path('stories/', storiesView.as_view(), name='stories'),
     path('doctorlogin/',DoctorLoginView.as_view(),name='doctorlogin'),
+    path('doctorlogin/<str:username>/', DoctorDataDetailView.as_view(), name='doctorupdate'),
 ]
 
 

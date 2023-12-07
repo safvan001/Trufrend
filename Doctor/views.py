@@ -44,7 +44,25 @@ class DoctorLoginView(APIView):
         else:
             # Authentication failed
             return Response({'detail': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
+class DoctorDataDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DoctorData.objects.all()
+    serializer_class = DoctorDataSerializer
+    lookup_field = 'username'  # Use 'username' as the lookup field
 
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response({'message': 'Doctor data updated successfully.'})
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({'message': 'Doctor data deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 class storiesView(generics.ListCreateAPIView):
     queryset = Stories.objects.all()
     serializer_class = StoriesSerializer

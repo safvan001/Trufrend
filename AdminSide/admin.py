@@ -1,7 +1,7 @@
 from django.contrib import admin
-from AdminSide.models import *
+from AdminSide.models import Stories,DoctorData
 from django.contrib.auth.admin import UserAdmin
-from .models import DoctorData,Stories
+# from .models import DoctorData,Stories
 
 # admin.site.register(DoctorData)
 # admin.site.register(Languages)

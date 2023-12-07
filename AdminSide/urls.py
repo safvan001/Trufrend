@@ -22,9 +22,11 @@ app_name="AdminSide"
 
 urlpatterns = [
     path('Doctordetail/',DoctordatView.as_view(),name='doctordetail'),
-    path('Doctordetail/<str:username>/', DoctorDataDetailView.as_view(), name='Doctordetail'),
+    path('Doctordetail/<str:username>/', DoctorUpdateView.as_view(), name='doctor-detail'),
     path('addlanguage/',AddLanguage.as_view(),name='addlanguage'),
     path('addspeciality/',AddSpecialization.as_view(),name='addspeciality'),
+    path('story/',StoryView.as_view(),name='story'),
+    path('addstory/',StoryCreateView.as_view(),name='addstory'),
     # path('language/',LanguageView.as_view(),name='language'),
     # path('language/<int:pk>/',LanguageUpdateanddeletView.as_view(),name='language'),
     # path('specialization/',SpecializationView.as_view(),name='specialization'),
