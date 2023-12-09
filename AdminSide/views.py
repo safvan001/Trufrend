@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics,mixins
-from AdminSide.models import DoctorData,Stories #Languages,Specality
+from AdminSide.models import DoctorData,Stories,Quotes #Languages,Specality
 from rest_framework.views import APIView
-from AdminSide.serializers import  DoctorDataSerializer,StoriesSerializer #LanguageSerializer,SpecializationSerializer
+from AdminSide.serializers import  DoctorDataSerializer,StoriesSerializer,QuotesSerializer #LanguageSerializer,SpecializationSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
@@ -183,10 +183,11 @@ class StoryCreateView(APIView):
 
         username = request.data.get('username')
         story = request.data.get('story')
+        media_type=request.data.get('media_type')
 
         try:
             doctor = DoctorData.objects.get(username=username)
-            sto=Stories.objects.create(doctor=doctor, story_file=story)
+            sto=Stories.objects.create(doctor=doctor, story_file=story, media_type=media_type)
 
             serializer = StoriesSerializer(sto)
             serialized_data = serializer.data
@@ -233,6 +234,55 @@ class StoryCreateView(APIView):
 #         queryset = Stories.objects.all()
 #         serializer = StoriesSerializer(queryset, many=True)
 #         return Response(serializer.data, status=status.HTTP_200_OK)
+class StoryRetrieveView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        try:
+            doctor = DoctorData.objects.get(username=username)
+            stories = Stories.objects.filter(doctor=doctor)
+
+            serializer = StoriesSerializer(stories, many=True)
+            serialized_data = serializer.data
+
+            response_data = {
+                'detail': 'Stories retrieved successfully',
+                'stories': serialized_data,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except DoctorData.DoesNotExist:
+            return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Stories.DoesNotExist:
+            return Response({'detail': 'No stories found for the given doctor.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+class QuotesPostingView(APIView):
+    def post(self,request):
+        quotes=request.data.get('quotes')
+        author=request.data.get('author')
+        try:
+            quote=Quotes.objects.create(quotes=quotes,author=author)
+            serializer=QuotesSerializer(quote)
+            serialized_data=serializer.data
+            response_data = {
+                'detail': 'Quotes added successful',
+                'story': serialized_data,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except DoctorData.DoesNotExist:
+            return Response({'detail': 'Unable to found instance of Quotes .'}, status=status.HTTP_404_NOT_FOUND)
+    def get(self,request):
+        try:
+            quote=Quotes.objects.all()
+            serializer = QuotesSerializer(quote, many=True)
+
+            # Return the serialized data as a JSON response
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # class LanguageView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
 #     queryset = Languages.objects.all()

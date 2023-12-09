@@ -1,5 +1,5 @@
 from django.contrib import admin
-from AdminSide.models import Stories,DoctorData
+from AdminSide.models import Stories,DoctorData,Quotes
 from django.contrib.auth.admin import UserAdmin
 # from .models import DoctorData,Stories
 
@@ -14,4 +14,5 @@ from django.contrib.auth.admin import UserAdmin
 #     )
 admin.site.register(Stories)
 admin.site.register(DoctorData)
+admin.site.register(Quotes)
 

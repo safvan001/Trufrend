@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from AdminSide.models import DoctorData,Stories #Languages,Specality
+from AdminSide.models import DoctorData,Stories,Quotes #Languages,Specality
 
 # class LanguageSerializer(serializers.ModelSerializer):
 #     class Meta:
@@ -23,6 +23,11 @@ class StoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stories
         fields = '__all__'
+class QuotesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Quotes
+        fields='__all__'
+
 
 
 

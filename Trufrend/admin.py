@@ -7,4 +7,5 @@ admin.site.register(Video)
 admin.site.register(VideoPack)
 admin.site.register(Favorite)
 admin.site.register(ContactUs)
+admin.site.register(Rating)
 # Register your models here.

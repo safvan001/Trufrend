@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating
 from AdminSide.models import DoctorData
 from AdminSide.serializers import  DoctorDataSerializer
 
@@ -25,9 +25,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = '__all__'
 
-
-
-
     # def update(self, instance, validated_data):
     #     challenges_data = validated_data.pop('challenges', None)  # Use None as default
     #
@@ -37,6 +34,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     #         instance.challenges.set(challenges_data)
     #
     #     return instance
+class RatingSerializer(serializers.ModelSerializer):
+    # profile=ProfileSerializer()
+    # doctor=DoctorDataSerializer()
+    class Meta:
+        model = Rating
+        fields = '__all__'
 class DpSerializer(serializers.ModelSerializer):
     class Meta:
         model=Profile
@@ -52,7 +55,6 @@ class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model =ContactUs
         fields ='__all__'
-
 
     # def create(self, validated_data):
     #     Favour_data = validated_data.pop('Favour_data',[])

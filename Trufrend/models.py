@@ -60,7 +60,10 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.phone_number
-
+class Rating(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(DoctorData, on_delete=models.CASCADE)
+    rating_value = models.IntegerField()
 class Favorite(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 

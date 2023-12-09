@@ -18,14 +18,14 @@ class DoctorLoginView(APIView):
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-        print(f"Username: {username}, Password: {password}")
+        # print(f"Username: {username}, Password: {password}")
 
         if not username or not password:
             return Response({'detail': 'Both username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             doctor = DoctorData.objects.get(username=username)
-            print(f"Stored Password: {doctor.password}")
+            # print(f"Stored Password: {doctor.password}")
         except DoctorData.DoesNotExist:
             return Response({'detail': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
 

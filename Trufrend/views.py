@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from decouple import config
 from twilio.rest import Client
 
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating
 from AdminSide.models import DoctorData
 from django.contrib.auth.models import User
 from rest_framework import viewsets
@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics,mixins
-from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer
+from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer,RatingSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -58,7 +58,7 @@ class VerifyUserView(APIView):
         #print(request.data)
         phone = "+91" + request.data.get('phone')
         code = request.data.get('code')
-        print(phone)
+        # print(phone)
         if not phone or not code:
             return Response({'error': 'Phone number and code are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -394,6 +394,83 @@ class RemoveDoctorFavourite(APIView):
 #         else:
 #             return Response({'error': 'Profile does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+from django.shortcuts import get_object_or_404
+
+
+class AddRatingView(APIView):
+    def post(self, request):
+        phone = '+91' + request.data.get('phone')
+        username = request.data.get('username')
+        rating_value = request.data.get('rating_value')
+        try:
+            # Get the profile and doctor objects
+            doctor = DoctorData.objects.get(username=username)
+            profile = Profile.objects.get(phone_number=phone)
+
+
+            # Check if a rating already exists for this profile-doctor pair
+            rating= Rating.objects.create(doctor=doctor,profile=profile,rating_value=rating_value)
+
+            # If the rating already exists, update the rating_value
+            # if not created:
+            #     rating.rating_value = rating_value
+            rating.save()
+
+            return Response({'message': 'Rating submitted successfully.'}, status=status.HTTP_200_OK)
+
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        except DoctorData.DoesNotExist:
+            return Response({'error': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DoctorAverageRatingView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+
+        try:
+            doctor = DoctorData.objects.get(username=username)
+            ratings = Rating.objects.filter(doctor=doctor)
+
+            if not ratings.exists():
+                return Response({'average_rating': 0}, status=status.HTTP_200_OK)
+
+            total_ratings = ratings.count()
+            sum_ratings = sum(rating.rating_value for rating in ratings)
+            average_rating = sum_ratings / total_ratings
+
+            return Response({'average_rating': average_rating}, status=status.HTTP_200_OK)
+
+        except DoctorData.DoesNotExist:
+            return Response({'error': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+# class AverageRatingView(generics.RetrieveAPIView):
+#     serializer_class = RatingSerializer
+#
+#     def get_object(self):
+#         doctor_username = self.kwargs['doctor_username']
+#         doctor = get_object_or_404(DoctorData, username=doctor_username)
+#
+#         ratings = Rating.objects.filter(doctor=doctor)
+#         total_ratings = ratings.count()
+#
+#         if total_ratings == 0:
+#             return {'averageRating': 0}
+#
+#         sum_ratings = sum(rating.rating_value for rating in ratings)
+#         average_rating = sum_ratings / total_ratings
+#
+#         return {'averageRating': average_rating}
 
 class ContactUsCreateAPIView(APIView):
     def post(self, request):
@@ -437,8 +514,6 @@ class ContactUsCreateAPIView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
 class UserCount(APIView):
     def get(self,request):
         try:
@@ -447,8 +522,6 @@ class UserCount(APIView):
         except Exception as e:
                 print(str(e))  # Log the exception for debugging
                 return Response({'error': 'Error occurred while fetching user count.'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
             # Create your views here.
 class get_user_profile(APIView):
