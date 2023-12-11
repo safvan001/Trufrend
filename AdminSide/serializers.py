@@ -18,11 +18,14 @@ class DoctorDataSerializer(serializers.ModelSerializer):
     class Meta:
         model=DoctorData
         fields='__all__'
+from django.http import JsonResponse
 class StoriesSerializer(serializers.ModelSerializer):
     doctor=DoctorDataSerializer()
     class Meta:
         model = Stories
         fields = '__all__'
+
+
 class QuotesSerializer(serializers.ModelSerializer):
     class Meta:
         model=Quotes

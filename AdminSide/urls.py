@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from .views import *
+from rest_framework.routers import DefaultRouter
 
 app_name="AdminSide"
+
 
 urlpatterns = [
     path('Doctordetail/',DoctordatView.as_view(),name='doctordetail'),
