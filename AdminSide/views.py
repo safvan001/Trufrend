@@ -255,7 +255,27 @@ class StoryRetrieveView(APIView):
         except Stories.DoesNotExist:
             return Response({'detail': 'No stories found for the given doctor.'}, status=status.HTTP_404_NOT_FOUND)
 
+from django.http import JsonResponse
+from django.core.serializers import serialize
 
+def get_all_stories(request):
+    # Assuming you have a Stories model
+    stories = Stories.objects.all()
+
+    # Create a dictionary to organize stories by doctor username
+    doctor_stories = {}
+
+    for story in stories:
+        doctor_username = story.doctor.username
+
+        if doctor_username not in doctor_stories:
+            doctor_stories[doctor_username] = []
+
+        # Serialize the story and add it to the corresponding doctor's list
+        serialized_story = serialize('json', [story])
+        doctor_stories[doctor_username].append(serialized_story)
+
+    return JsonResponse(doctor_stories, safe=False)
 
 class QuotesPostingView(APIView):
     def post(self,request):

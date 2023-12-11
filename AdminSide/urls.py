@@ -28,6 +28,7 @@ urlpatterns = [
     path('story/',StoryView.as_view(),name='story'),
     path('getstory/',StoryRetrieveView.as_view(),name="getstory"),
     path('addstory/',StoryCreateView.as_view(),name='addstory'),
+    path('getallstory/',get_all_stories,name='getallstory'),
     path('quotes/',QuotesPostingView.as_view(),name='quotes')
     # path('language/',LanguageView.as_view(),name='language'),
     # path('language/<int:pk>/',LanguageUpdateanddeletView.as_view(),name='language'),
