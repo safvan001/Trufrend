@@ -390,6 +390,21 @@ class OnlineUserDecrementView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class GetUserCountView(APIView):
+    def get(self, request):
+        try:
+            # Get the existing Usercount instance or create a new one
+            user_count_instance, created = Usercount.objects.get_or_create(pk=1, defaults={'user_count': 0})
+
+            return Response({'user_count': user_count_instance.user_count}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+
 
 
 

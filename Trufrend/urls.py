@@ -54,6 +54,7 @@ urlpatterns = [
     path('contactUs/', ContactUsCreateAPIView.as_view(), name='contactUs'),
     path('onlineuser/',OnlineUserCountView.as_view(),name='onlineuser'),
     path('offlineuser/',OnlineUserDecrementView.as_view(),name='offlineuser'),
+    path('totalcount/',GetUserCountView.as_view(),name='totalcount'),
     path('get_user_profile/', get_user_profile.as_view(), name='get_user_profile'),
 ]
 urlpatterns += router.urls
