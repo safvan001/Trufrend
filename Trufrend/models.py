@@ -30,6 +30,10 @@ class Challenge(models.Model):
     # challenges=models.CharField(max_length=100)
     def __str__(self):
         return self.challenges
+class Languages(models.Model):
+    language=models.CharField(max_length=100)
+    def __str__(self):
+        return self.language
 class VideoPack(models.Model):
     video_file = models.FileField(upload_to='videos/',default=1)
     subtitle=models.CharField(max_length=200,default=' ')
@@ -54,7 +58,15 @@ class Profile(models.Model):
     dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True,default="img/profile_pictures/userimage.png")
     name = models.CharField(max_length=100)
     nick_name = models.CharField(max_length=50)
+    age=models.CharField(max_length=50,null=True, blank=True)
+    CHOICES = (
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('others', 'others'),
+    )
+    Gender = models.CharField(max_length=100, choices=CHOICES, null=True, blank=True, default='Male')
     challenges = models.ManyToManyField(Challenge)
+    language=models.ManyToManyField(Languages)
     videoFavour = models.ManyToManyField(Video)
     doctorFavour=models.ManyToManyField(DoctorData)
 

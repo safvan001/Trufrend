@@ -169,7 +169,7 @@ class StoryView(generics.ListCreateAPIView):
             created_at = story.created_at
 
             # Define the threshold (e.g., 2 minutes)
-            threshold = timezone.timedelta(minutes=2)
+            threshold = timezone.timedelta(days=1)
 
             # Check if the story is older than the threshold
             if current_time > created_at + threshold:
@@ -311,6 +311,11 @@ from django.http import JsonResponse
 from django.core.serializers import serialize
 from rest_framework import viewsets
 import json
+
+from django.http import JsonResponse
+
+from django.http import JsonResponse
+
 def get_all_stories(request):
     # Assuming you have a Stories model
     stories = Stories.objects.all()
@@ -319,28 +324,51 @@ def get_all_stories(request):
     serialized_stories = StoriesSerializer(stories, many=True).data
 
     # Organize stories by doctor username
-    doctor_stories = {}
+    doctor_stories = []
 
     for serialized_story in serialized_stories:
         doctor_data = serialized_story['doctor']
 
-        doctor_username = doctor_data['username']
+        # Check if the doctor is already in the list
+        existing_doctor = next((doc for doc in doctor_stories if doc['doctor_details']['username'] == doctor_data['username']), None)
 
-        if doctor_username not in doctor_stories:
-            doctor_stories[doctor_username] = {
-                'doctor_details': doctor_data,  # Store doctor details
-                'stories': []                   # Store stories for each doctor
+        if existing_doctor:
+            # Add the story to the existing doctor's list
+            story = {
+                'story_file': serialized_story['story_file'],
+                'created_at': serialized_story['created_at'],
+                'media_type': serialized_story['media_type']
             }
+            existing_doctor['stories'].append(story)
+        else:
+            # Create a new doctor entry with details and story
+            doctor_story = {
+                'doctor_details': doctor_data,  # Store doctor details
+                'stories': [
+                    {
+                        'story_file': serialized_story['story_file'],
+                        'created_at': serialized_story['created_at'],
+                        'media_type': serialized_story['media_type']
+                    }
+                ]
+            }
+            doctor_stories.append(doctor_story)
 
-        # Add the story to the corresponding doctor's list
-        story = {
-            'story_file': serialized_story['story_file'],
-            'created_at': serialized_story['created_at'],
-            'media_type': serialized_story['media_type']
-        }
-        doctor_stories[doctor_username]['stories'].append(story)
+    # Wrap the list in a dictionary with the "doctors" key
+    response_data = {'doctors': doctor_stories}
 
-    return JsonResponse(doctor_stories, safe=False)
+    return JsonResponse(response_data, safe=False)
+
+
+
+
+
+
+
+
+
+
+
 
 # class StoryGetView(APIView):
 #     def post(self,request):
@@ -359,8 +387,6 @@ def get_all_stories(request):
 #             return Response(response_data, status=status.HTTP_200_OK)
 #         except DoctorData.DoesNotExist:
 #             return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-
 
 
 class QuotesPostingView(APIView):

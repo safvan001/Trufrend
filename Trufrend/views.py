@@ -168,14 +168,20 @@ class ProfileListCreateAPIView(APIView):
         nick_name = request.data.get('nick_name')
         name = request.data.get('name')
         dp=request.data.get('dp')
+        age=request.data.get('age')
+        Gender=request.data.get('Gender')
         challenges=request.data.get('challenges',[])
+        language=request.data.get('language',[])
         videoFavour=request.data.get('videoFavour',[])
 
         try:
             profile = Profile.objects.get(phone_number=phone)
             profile.nick_name = nick_name
             profile.name = name
+            profile.age=age
+            profile.Gender=Gender
             profile.challenges.add(*challenges)
+            profile.language.add(*language)
             profile.videoFavour.add(*videoFavour)
 
             # If an image is provided, save it to the 'dp' field
@@ -450,7 +456,6 @@ class DoctorAverageRatingView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
 
