@@ -1,5 +1,5 @@
 from django.contrib import admin
-from AdminSide.models import Stories,DoctorData,Quotes
+from AdminSide.models import Stories,DoctorData,Quotes,Languages
 from django.contrib.auth.admin import UserAdmin
 # from .models import DoctorData,Stories
 
@@ -13,6 +13,7 @@ from django.contrib.auth.admin import UserAdmin
 #         ('Custom Fields', {'fields': ('Dp',)}),  # Add other custom fields here
 #     )
 admin.site.register(Stories)
+admin.site.register(Languages)
 admin.site.register(DoctorData)
 admin.site.register(Quotes)
 

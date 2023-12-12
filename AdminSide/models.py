@@ -23,10 +23,7 @@ from django.utils import timezone
 #         extra_fields.setdefault('is_superuser', True)
 #
 #         return self.create_user(username, password, **extra_fields)
-# class Languages(models.Model):
-#     languages=models.CharField(max_length=100,null=True,blank=True)
-#     def __str__(self):
-#         return self.languages
+
 # class Specality(models.Model):
 #     specialization=models.CharField(max_length=100,null=True,blank=True)
 #     def __str__(self):
@@ -93,7 +90,10 @@ from django.utils import timezone
 #
 #     def __str__(self):
 #         return self.username
-
+class Languages(models.Model):
+    languages=models.CharField(max_length=100,null=True,blank=True)
+    def __str__(self):
+        return self.languages
 
 class DoctorData(models.Model):
     username=models.CharField(max_length=100)
