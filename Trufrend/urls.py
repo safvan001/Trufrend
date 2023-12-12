@@ -37,6 +37,7 @@ urlpatterns = [
     path('name/',Nickname.as_view(),name='name'),
     # path('video',VideoCreateView.as_view(),name='video'),
     path('addchallenge/',AddChallenges.as_view(),name='addchallenge'),
+    path('addlanguage/',AddLanguage.as_view(),name='AddLanguage'),
     path('challenge/',ChallengeList.as_view(),name='challenge'),
     path('usercount/',UserCount.as_view(),name='usecount'),
     # path('videos/<str:title>/',  VideoList.as_view(), name='video-list-create'),

@@ -3,6 +3,8 @@ from django.contrib.auth.hashers import make_password,check_password
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+# from Trufrend.models import Video
+# from Trufrend.models import VideoPack
 from django.db import models
 from django.utils import timezone
 
@@ -123,6 +125,7 @@ class DoctorData(models.Model):
     Education = models.TextField(null=True,blank=True)
     Experience = models.CharField(max_length=100,null=True,blank=True)
     callDuration = models.CharField(max_length=15, default='30 Minutes')
+    # VideoFavour=models.ManyToManyField(Video)
 
     # def save(self, *args, **kwargs):
     #     # Handle password hashing before saving

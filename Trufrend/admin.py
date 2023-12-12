@@ -9,4 +9,5 @@ admin.site.register(Favorite)
 admin.site.register(ContactUs)
 admin.site.register(Rating)
 admin.site.register(Usercount)
+admin.site.register(Languages)
 # Register your models here.

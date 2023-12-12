@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from decouple import config
 from twilio.rest import Client
 
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating,Usercount
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating,Usercount,Languages
 from AdminSide.models import DoctorData
 from django.contrib.auth.models import User
 from rest_framework import viewsets
@@ -205,7 +205,40 @@ class ProfileListCreateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class AddLanguage(APIView):
+    def post(self,request):
+        try:
+            phone='+91'+request.data.get('phone')
+            Language_ids = request.data.get('Language_ids', [])
 
+            if not Language_ids:
+                return Response({'error': 'Language_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+            if not phone:
+                return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                profile = Profile.objects.get(phone_number=phone)
+            except Profile.DoesNotExist:
+                return Response({'error': 'profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            valid_languages = []
+            for language_id in Language_ids:
+                try:
+                    language = Languages.objects.get(id=language_id)
+                    if language not in valid_languages:  # Ensure uniqueness
+                        valid_languages.append(language)
+                except Languages.DoesNotExist:
+                    return Response({'error': f'Languages with ID {language_id} not found.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            # Add the unique challenges to the profile using the many-to-many relationship
+            profile.language.add(*valid_languages)
+
+            return Response({'message': 'Language added to the profile successfully.'}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(str(e))  # Log the exception for debugging
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class VideoViewSet(viewsets.ModelViewSet):

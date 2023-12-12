@@ -27,6 +27,7 @@ urlpatterns = [
     path('Doctordetail/<str:username>/', DoctorUpdateView.as_view(), name='doctor-detail'),
     path('addlanguage/',AddLanguage.as_view(),name='addlanguage'),
     path('addspeciality/',AddSpecialization.as_view(),name='addspeciality'),
+    path('DoctorVideoFavour/',DoctorVideoFavouriteView.as_view(),name='DoctorVideoFavour'),
     path('story/',StoryView.as_view(),name='story'),
     path('getstory/',StoryRetrieveView.as_view(),name="getstory"),
     path('addstory/',StoryCreateView.as_view(),name='addstory'),

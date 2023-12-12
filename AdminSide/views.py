@@ -6,6 +6,7 @@ from AdminSide.serializers import  DoctorDataSerializer,StoriesSerializer,Quotes
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
+from Trufrend.models import Video
 
 # class DoctorDataView(generics.ListCreateAPIView):
 #     queryset = DoctorData.objects.all()
@@ -88,6 +89,8 @@ from django.db import IntegrityError
 class DoctordatView(generics.ListCreateAPIView):
     queryset = DoctorData.objects.all()
     serializer_class =  DoctorDataSerializer
+
+
     # def post(self,request):
     #     username=request.data.get('username')
     #     password=request.data.get('password')
@@ -150,6 +153,7 @@ class DoctordatView(generics.ListCreateAPIView):
     #     except Exception as e:
     #         print(str(e))  # Log the exception for debugging
     #         return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class DoctorUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DoctorData.objects.all()
     serializer_class = DoctorDataSerializer
@@ -178,6 +182,46 @@ class StoryView(generics.ListCreateAPIView):
                 story.delete()
 
         return self.list(request, *args, **kwargs)
+class DoctorVideoFavouriteView(APIView):
+    def post(self, request):
+        try:
+            username = request.data.get('username')  # Change 'id' to 'profile_id'
+            video_ids = request.data.get('video_ids', [])
+            # Default to an empty list if not provided
+
+            if not video_ids:
+                return Response({'error': 'video_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if the profile_id is a valid number
+            if not username:
+                return Response({'error': 'username provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Get the profile object
+            try:
+                doctor = DoctorData.objects.get(username=username)
+            except DoctorData.DoesNotExist:
+                return Response({'error': 'doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Validate challenge IDs and ensure uniqueness
+            valid_video = []
+            for video_id in video_ids:
+                try:
+                    video = Video.objects.get(id=video_id)
+                    if video not in valid_video:  # Ensure uniqueness
+                        valid_video.append(video)
+                except Video.DoesNotExist:
+                    return Response({'error': f'Video with ID {video_id} not found.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            # Add the unique challenges to the profile using the many-to-many relationship
+            doctor.VideoFavour.add(*valid_video)
+
+            return Response({'message': 'VideoFavourite added to the profile successfully.'},
+                            status=status.HTTP_200_OK)
+        except Exception as e:
+            print(str(e))  # Log the exception for debugging
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # class StoryCreateView(APIView):
 #     def post(self, request):

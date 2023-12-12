@@ -1,4 +1,5 @@
 from django.db import models
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
@@ -30,10 +31,7 @@ class Challenge(models.Model):
     # challenges=models.CharField(max_length=100)
     def __str__(self):
         return self.challenges
-class Languages(models.Model):
-    language=models.CharField(max_length=100,null=True, blank=True)
-    def __str__(self):
-        return self.language
+
 class VideoPack(models.Model):
     video_file = models.FileField(upload_to='videos/',default=1)
     subtitle=models.CharField(max_length=200,default=' ')
@@ -52,7 +50,10 @@ class Video(models.Model):
     # Add other fields if necessary
     def __str__(self):
         return self.title
-
+class Languages(models.Model):
+    language=models.CharField(max_length=100,null=True, blank=True)
+    def __str__(self):
+        return self.language
 class Profile(models.Model):
     phone_number = models.CharField(max_length=15,default='')
     dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True,default="img/profile_pictures/userimage.png")
