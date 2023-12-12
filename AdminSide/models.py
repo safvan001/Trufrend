@@ -24,10 +24,7 @@ from django.utils import timezone
 #
 #         return self.create_user(username, password, **extra_fields)
 
-# class Specality(models.Model):
-#     specialization=models.CharField(max_length=100,null=True,blank=True)
-#     def __str__(self):
-#         return self.specialization
+
 
 
 
@@ -91,6 +88,10 @@ from django.utils import timezone
 #     def __str__(self):
 #         return self.username
 # from Trufrend.models import Video
+class Specality(models.Model):
+    specialization=models.CharField(max_length=100,null=True,blank=True)
+    def __str__(self):
+        return self.specialization
 class Languages(models.Model):
     languages=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
@@ -108,7 +109,7 @@ class DoctorData(models.Model):
     )
     Gender=models.CharField(max_length=100,choices=CHOICES,null=True,blank=True,default='Male')
     Language=models.ManyToManyField(Languages)
-    # Specialization=models.ManyToManyField(Specality)
+    Specialization=models.ManyToManyField(Specality)
     CurrentAddress = models.TextField(null=True,blank=True)
     permanentAddress = models.TextField(null=True,blank=True)
     name=models.CharField(max_length=100,blank=True,null=True)

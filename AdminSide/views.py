@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics,mixins
-from AdminSide.models import DoctorData,Stories,Quotes,Languages#Specality
+from AdminSide.models import DoctorData,Stories,Quotes,Languages,Specality
 from rest_framework.views import APIView
 from AdminSide.serializers import  DoctorDataSerializer,StoriesSerializer,QuotesSerializer #LanguageSerializer,SpecializationSerializer
 from rest_framework.response import Response
@@ -97,7 +97,7 @@ class DoctordatView(generics.ListAPIView):
         Dp=request.data.get('Dp')
         Gender=request.data.get('Gender')
         Language=request.data.get('Language', [])
-        # Specialization=request.data.get('Specialization',[])
+        Specialization=request.data.get('Specialization',[])
         CurrentAddress=request.data.get('CurrentAddress')
         permanentAddress=request.data.get('permanentAddress')
         name=request.data.get('name')
@@ -143,7 +143,7 @@ class DoctordatView(generics.ListAPIView):
                 callDuration=callDuration
             )
             doctor.Language.add(*Language)
-            # doctor.Specialization.add(*Specialization)
+            doctor.Specialization.add(*Specialization)
             doctor.save()
             return Response({'message': 'Doctor data created successfully.'}, status=status.HTTP_201_CREATED)
         # except IntegrityError:
