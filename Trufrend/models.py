@@ -31,7 +31,7 @@ class Challenge(models.Model):
     def __str__(self):
         return self.challenges
 class Languages(models.Model):
-    language=models.CharField(max_length=100)
+    language=models.CharField(max_length=100,null=True, blank=True)
     def __str__(self):
         return self.language
 class VideoPack(models.Model):
