@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from decouple import config
 from twilio.rest import Client
 
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating,Usercount
 from AdminSide.models import DoctorData
 from django.contrib.auth.models import User
 from rest_framework import viewsets
@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics,mixins
-from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer,RatingSerializer
+from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer,RatingSerializer,OnlineUserCountSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -361,6 +361,39 @@ class RemoveDoctorFavourite(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class OnlineUserCountView(APIView):
+    def post(self, request):
+        try:
+            # Get the existing Usercount instance or create a new one
+            # count = int(request.data.get('count', 0))
+            user_count_instance, created = Usercount.objects.get_or_create(pk=1, defaults={'user_count': 0})
+
+            # Increment the user_count by 1
+            user_count_instance.user_count += 1
+            user_count_instance.save()
+
+            return Response({'total': user_count_instance.user_count}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class OnlineUserDecrementView(APIView):
+    def post(self, request):
+        try:
+            # Get the existing Usercount instance or create a new one
+            user_count_instance, created = Usercount.objects.get_or_create(pk=1, defaults={'user_count': 0})
+
+            # Decrement the user_count by 1
+            user_count_instance.user_count -= 1
+            user_count_instance.save()
+
+            return Response({'total': user_count_instance.user_count}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
 
 
 

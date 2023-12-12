@@ -52,6 +52,8 @@ urlpatterns = [
     path('add-to-favorite/', AddToFavoriteView.as_view(), name='add-to-favorite'),
     path('remove-from-favorite/<int:pk>/', RemoveFromFavoriteView.as_view(), name='remove-from-favorite'),
     path('contactUs/', ContactUsCreateAPIView.as_view(), name='contactUs'),
+    path('onlineuser/',OnlineUserCountView.as_view(),name='onlineuser'),
+    path('offlineuser/',OnlineUserDecrementView.as_view(),name='offlineuser'),
     path('get_user_profile/', get_user_profile.as_view(), name='get_user_profile'),
 ]
 urlpatterns += router.urls

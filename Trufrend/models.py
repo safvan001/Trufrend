@@ -76,6 +76,11 @@ class Rating(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     doctor = models.ForeignKey(DoctorData, on_delete=models.CASCADE)
     rating_value = models.IntegerField()
+
+class Usercount(models.Model):
+    user_count=models.IntegerField()
+    def __int__(self):
+        return self.user_count
 class Favorite(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
