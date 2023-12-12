@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password,check_password
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-# from Trufrend.models import Video
+
 # from Trufrend.models import VideoPack
 from django.db import models
 from django.utils import timezone
@@ -90,6 +90,7 @@ from django.utils import timezone
 #
 #     def __str__(self):
 #         return self.username
+# from Trufrend.models import Video
 class Languages(models.Model):
     languages=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
@@ -106,7 +107,7 @@ class DoctorData(models.Model):
         ('others', 'others'),
     )
     Gender=models.CharField(max_length=100,choices=CHOICES,null=True,blank=True,default='Male')
-    # Language=models.ManyToManyField(Languages)
+    Language=models.ManyToManyField(Languages)
     # Specialization=models.ManyToManyField(Specality)
     CurrentAddress = models.TextField(null=True,blank=True)
     permanentAddress = models.TextField(null=True,blank=True)

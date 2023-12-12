@@ -5,7 +5,10 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 from multiselectfield import MultiSelectField
 from os.path import basename
+
+
 from AdminSide.models import DoctorData
+
 
 CHOICES = (
         ('Anxiety', 'Anxiety'),
