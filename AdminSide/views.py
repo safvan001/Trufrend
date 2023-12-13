@@ -116,6 +116,8 @@ class DoctordatView(generics.ListAPIView):
         Experience=request.data.get('Experience')
         callDuration=request.data.get('callDuration')
         try:
+            if not Language or not Specialization:
+                return Response({'error': 'Language and specialization are not provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
             # DoctorData.save()
             doctor = DoctorData.objects.create(

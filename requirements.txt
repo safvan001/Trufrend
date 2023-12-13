@@ -31,6 +31,8 @@ multidict==6.0.4
 Pillow==10.1.0
 pipreqs==0.4.13
 prompt-toolkit==3.0.41
+psycopg2==2.9.9
+psycopg2-binary==2.9.9
 PyJWT==2.8.0
 python-dateutil==2.8.2
 python-decouple==3.8
