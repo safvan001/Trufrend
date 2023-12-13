@@ -235,6 +235,32 @@ class DoctorVideoFavouriteView(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class DeleteDrVideoFavouriteView(APIView):
+    def post(self, request):
+        try:
+            username = request.data.get('username')  # Change 'id' to 'profile_id'
+            video_ids = request.data.get('video_ids', [])
+
+            if not username or not video_ids:
+                return Response({'error': 'Invalid input data.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Get the profile object
+            try:
+                doctor = DoctorData.objects.get(username=username)
+            except DoctorData.DoesNotExist:
+                return Response({'error': 'doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Validate video IDs
+            valid_video_ids = [video_id for video_id in video_ids if Video.objects.filter(id=video_id).exists()]
+
+            # Remove the specified videos from the profile's videoFavour
+            doctor.VideoFavour.remove(*valid_video_ids)
+
+            return Response({'message': 'VideoFavourite removed from the doctor successfully.'}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(str(e))  # Log the exception for debugging
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # class StoryCreateView(APIView):

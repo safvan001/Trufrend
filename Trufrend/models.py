@@ -7,7 +7,6 @@ from multiselectfield import MultiSelectField
 from os.path import basename
 
 
-from AdminSide.models import DoctorData
 
 
 CHOICES = (
@@ -72,12 +71,14 @@ class Profile(models.Model):
     challenges = models.ManyToManyField(Challenge)
     language=models.ManyToManyField(Languages)
     videoFavour = models.ManyToManyField(Video)
+    from AdminSide.models import DoctorData
     doctorFavour=models.ManyToManyField(DoctorData)
 
     def __str__(self):
         return self.phone_number
 class Rating(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    from AdminSide.models import DoctorData
     doctor = models.ForeignKey(DoctorData, on_delete=models.CASCADE)
     rating_value = models.IntegerField()
 

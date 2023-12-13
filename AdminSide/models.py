@@ -87,7 +87,11 @@ from django.utils import timezone
 #
 #     def __str__(self):
 #         return self.username
-# from Trufrend.models import Video
+
+
+
+
+
 class Specality(models.Model):
     specialization=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
@@ -114,7 +118,7 @@ class DoctorData(models.Model):
     permanentAddress = models.TextField(null=True,blank=True)
     name=models.CharField(max_length=100,blank=True,null=True)
     phone = models.CharField(max_length=18)
-    Email=models.EmailField(blank=True)
+    Email=models.EmailField(null=True,blank=True)
     Degrees = models.FileField(upload_to='doctor/certificate',null=True,blank=True)
     Diplomas = models.FileField(upload_to='doctor/diploma',null=True,blank=True)
     References = models.TextField(null=True,blank=True)
@@ -126,8 +130,9 @@ class DoctorData(models.Model):
     Aboutme = models.TextField(null=True,blank=True)
     Education = models.TextField(null=True,blank=True)
     Experience = models.CharField(max_length=100,null=True,blank=True)
-    callDuration = models.CharField(max_length=15, default='30 Minutes')
-    # VideoFavour=models.ManyToManyField(Video)
+    callDuration = models.CharField(max_length=15, default='30 Minutes',null=True,blank=True)
+    from Trufrend.models import Video
+    VideoFavour=models.ManyToManyField(Video)
 
     # def save(self, *args, **kwargs):
     #     # Handle password hashing before saving
