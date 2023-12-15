@@ -87,14 +87,14 @@ WSGI_APPLICATION = 'Tru_frend.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-
+from decouple import config
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'asmidb',
-        'USER': 'asmisuperuser',
-        'PASSWORD': 'asmisuperuser',
+        'USER': config('USER', default=''),
+        'PASSWORD': config('PASSWORD', default=''),
         'HOST': 'asmidatabase.cke3m9ejygyr.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
     }
