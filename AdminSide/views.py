@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics,mixins
-from AdminSide.models import DoctorData,Stories,Quotes,Languages,Specality
+from AdminSide.models import DoctorData,Quotes,Languages,Specality,Stories
 from rest_framework.views import APIView
-from AdminSide.serializers import  DoctorDataSerializer,StoriesSerializer,QuotesSerializer #LanguageSerializer,SpecializationSerializer
+from AdminSide.serializers import  DoctorDataSerializer,QuotesSerializer,StoriesSerializer #LanguageSerializer,SpecializationSerializer,StoriesSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
@@ -84,6 +84,33 @@ class AddSpecialization(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 from django.db import IntegrityError
+class BaseView(APIView):
+    def delete_old_stories(self):
+        # Get the current time
+        current_time = timezone.now()
+
+        # Iterate over all Stories instances
+        for story in Stories.objects.all():
+            # Access the created_at attribute
+            created_at = story.created_at
+
+            # Define the threshold (e.g., 2 minutes)
+            threshold = timezone.timedelta(minutes=3)
+
+            # Check if the story is older than the threshold
+            if current_time > created_at + threshold:
+                # Delete the story if it's older than the threshold
+                story.story_file.delete()
+                story.delete()
+
+    def list(self, request, *args, **kwargs):
+        # Delete old stories
+        self.delete_old_stories()
+
+        # Return the list of stories
+        queryset = Stories.objects.all()
+        serializer = StoriesSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class DoctordatView(generics.ListAPIView):
@@ -154,6 +181,7 @@ class DoctordatView(generics.ListAPIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     # def get(self,request):
     #     try:
     #         # Your existing code for creating a new doctor
@@ -170,16 +198,12 @@ class DoctordatView(generics.ListAPIView):
     #         print(str(e))  # Log the exception for debugging
     #         return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class DoctorUpdateView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = DoctorData.objects.all()
-    serializer_class = DoctorDataSerializer
-    lookup_field = 'username'
-
 class StoryView(generics.ListCreateAPIView):
     queryset = Stories.objects.all()
     serializer_class = StoriesSerializer
 
-    def get(self, request, *args, **kwargs):
+
+    def delete_old_stories(self):
         # Get the current time
         current_time = timezone.now()
 
@@ -189,7 +213,7 @@ class StoryView(generics.ListCreateAPIView):
             created_at = story.created_at
 
             # Define the threshold (e.g., 2 minutes)
-            threshold = timezone.timedelta(days=1)
+            threshold = timezone.timedelta(minutes=3)
 
             # Check if the story is older than the threshold
             if current_time > created_at + threshold:
@@ -197,7 +221,90 @@ class StoryView(generics.ListCreateAPIView):
                 story.story_file.delete()
                 story.delete()
 
-        return self.list(request, *args, **kwargs)
+    def list(self, request, *args, **kwargs):
+        # Delete old stories
+        self.delete_old_stories()
+
+        # Return the list of stories
+        queryset = Stories.objects.all()
+        serializer = StoriesSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class AllDoctorsWithStoriesView(BaseView,APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            # Get all doctors
+            doctors = DoctorData.objects.all()
+
+            # Serialize the doctor data for all doctors
+            doctors_serializer = DoctorDataSerializer(doctors, many=True)
+            doctors_data = doctors_serializer.data
+
+            # Serialize the stories data for all doctors
+            stories_serializer = StoriesSerializer(Stories.objects.all(), many=True)
+            stories_data = stories_serializer.data
+
+            # Include the serialized data in the response
+            response_data = {
+                'doctors': doctors_data,
+                'stories': stories_data,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#
+#     def delete_old_stories(self):
+#         current_time = timezone.now()
+#
+#         for story in Stories.objects.all():
+#             created_at = story.created_at
+#             threshold = timezone.timedelta(minutes=3)
+#
+#             if current_time > created_at + threshold:
+#                 story.story_file.delete()
+#                 story.delete()
+#
+#     def list(self, request, *args, **kwargs):
+#         # Delete old stories
+#         self.delete_old_stories()
+#
+#         # Return the list of stories
+#         queryset = Stories.objects.all()
+#         serializer = StoriesSerializer(queryset, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
+class DoctorUpdateView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DoctorData.objects.all()
+    serializer_class = DoctorDataSerializer
+    lookup_field = 'username'
+
+# class StoryView(generics.ListCreateAPIView):
+#     queryset = Stories.objects.all()
+#     serializer_class = StoriesSerializer
+#
+#     def get(self, request, *args, **kwargs):
+#         # Get the current time
+#         current_time = timezone.now()
+#
+#         # Iterate over all Stories instances
+#         for story in Stories.objects.all():
+#             # Access the created_at attribute
+#             created_at = story.created_at
+#
+#             # Define the threshold (e.g., 2 minutes)
+#             threshold = timezone.timedelta(days=1)
+#
+#             # Check if the story is older than the threshold
+#             if current_time > created_at + threshold:
+#                 # Delete the story if it's older than the threshold
+#                 story.story_file.delete()
+#                 story.delete()
+#
+#         return self.list(request, *args, **kwargs)
 class DoctorVideoFavouriteView(APIView):
     def post(self, request):
         try:
@@ -321,6 +428,7 @@ class DeleteDrVideoFavouriteView(APIView):
 #         queryset = Stories.objects.all()
 #         serializer = StoriesSerializer(queryset, many=True)
 #         return Response(serializer.data, status=status.HTTP_200_OK)
+'''
 class StoryCreateView(APIView):
     def post(self, request):
         username = request.data.get('username')
@@ -371,6 +479,38 @@ class StoryCreateView(APIView):
     #     queryset = Stories.objects.all()
     #     serializer = StoriesSerializer(queryset, many=True)
     #     return Response(serializer.data, status=status.HTTP_200_OK)
+'''
+
+class AddStoryView(APIView):
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        story_file = request.FILES.get('story_file')  # Assuming 'story_file' is the file field for the story
+        media_type = request.data.get('media_type')
+
+        try:
+            doctor = DoctorData.objects.get(username=username)
+
+            # Create a new story object
+            story = Stories.objects.create(story_file=story_file, media_type=media_type)
+
+            # Add the story to the doctor's stories
+            doctor.story.add(story)
+
+            # Serialize the story data
+            serializer = StoriesSerializer(story)
+            serialized_data = serializer.data
+
+            # Include the serialized data in the response
+            response_data = {
+                'detail': 'Story added successfully',
+                'story': serialized_data,
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        except DoctorData.DoesNotExist:
+            return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class StoryRetrieveView(APIView):
     def post(self, request):

@@ -89,9 +89,6 @@ from django.utils import timezone
 #         return self.username
 
 
-
-
-
 class Specality(models.Model):
     specialization=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
@@ -100,7 +97,10 @@ class Languages(models.Model):
     languages=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
         return self.languages
-
+class Stories(models.Model):
+    story_file = models.FileField(upload_to='stories/',null=True,blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    media_type=models.TextField(null=True,blank=True)
 class DoctorData(models.Model):
     username=models.CharField(max_length=100)
     password=models.CharField(max_length=128)
@@ -133,7 +133,7 @@ class DoctorData(models.Model):
     callDuration = models.CharField(max_length=15, default='30 Minutes',null=True,blank=True)
     from Trufrend.models import Video
     VideoFavour=models.ManyToManyField(Video)
-
+    story=models.ManyToManyField(Stories)
     # def save(self, *args, **kwargs):
     #     # Handle password hashing before saving
     #     self.password = make_password(self.password)
@@ -144,14 +144,14 @@ class DoctorData(models.Model):
 
     def __str__(self):
         return self.username
-class Stories(models.Model):
-    story_file = models.FileField(upload_to='stories/',null=True,blank=True)
-    created_at = models.DateTimeField(default=timezone.now)
-    doctor = models.ForeignKey(DoctorData, on_delete=models.CASCADE, related_name='stories',default='')
-    media_type=models.TextField(null=True,blank=True)
+# class Stories(models.Model):
+#     story_file = models.FileField(upload_to='stories/',null=True,blank=True)
+#     created_at = models.DateTimeField(default=timezone.now)
+#     doctor = models.ForeignKey(DoctorData, on_delete=models.CASCADE, related_name='stories',default='')
+#     media_type=models.TextField(null=True,blank=True)
 
-    def __str__(self):
-        return str(self.story_file)
+    # def __str__(self):
+    #     return str(self.story_file)
 class Quotes(models.Model):
     quotes=models.TextField(null=True,blank=True)
     author=models.CharField(max_length=200)

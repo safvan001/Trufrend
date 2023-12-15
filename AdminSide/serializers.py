@@ -11,22 +11,25 @@ class SpecializationSerializer(serializers.ModelSerializer):
         model=Specality
         fields='__all__'
 
-
+class StoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stories
+        fields = ['id', 'story_file', 'created_at', 'media_type']
 class DoctorDataSerializer(serializers.ModelSerializer):
     from Trufrend.serializers import VideoSerializer
     Language=LanguageSerializer(many=True)
     Specialization=SpecializationSerializer(many=True)
     VideoFavour=VideoSerializer(many=True)
-    # story=StoriesSerializer()
+    story=StoriesSerializer(many=True)
     class Meta:
         model=DoctorData
         fields='__all__'
 from django.http import JsonResponse
-class StoriesSerializer(serializers.ModelSerializer):
-    doctor=DoctorDataSerializer()
-    class Meta:
-        model = Stories
-        fields = '__all__'
+# class StoriesSerializer(serializers.ModelSerializer):
+#     doctor=DoctorDataSerializer()
+#     class Meta:
+#         model = Stories
+#         fields = '__all__'
 
 
 class QuotesSerializer(serializers.ModelSerializer):
