@@ -106,6 +106,7 @@ class DoctorData(models.Model):
     password=models.CharField(max_length=128)
     Dp=models.FileField(upload_to='doctor/Dp',null=True,blank=True)
     DOB = models.DateField(null=True,blank=True)
+    is_online = models.BooleanField(default=False)
     CHOICES = (
         ('Male', 'Male'),
         ('Female', 'Female'),
@@ -130,11 +131,11 @@ class DoctorData(models.Model):
     Aboutme = models.TextField(null=True,blank=True)
     Education = models.TextField(null=True,blank=True)
     Experience = models.CharField(max_length=100,null=True,blank=True)
-    callDuration = models.CharField(max_length=15, default='30 Minutes',null=True,blank=True)
+    callDuration = models.CharField(max_length=15, default='30 Minutes', null=True, blank=True)
     from Trufrend.models import Video
     VideoFavour=models.ManyToManyField(Video)
     story=models.ManyToManyField(Stories)
-    is_online = models.BooleanField(default=False)
+
     # def save(self, *args, **kwargs):
     #     # Handle password hashing before saving
     #     self.password = make_password(self.password)

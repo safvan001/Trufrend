@@ -81,24 +81,24 @@ WSGI_APPLICATION = 'Tru_frend.wsgi.application'
 # Database
 # # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-# from decouple import config
-#
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'asmidb',
-#         'USER': config('USER', default=''),
-#         'PASSWORD': config('PASSWORD', default=''),
-#         'HOST': 'asmidatabase.cke3m9ejygyr.us-east-1.rds.amazonaws.com',
-#         'PORT': '5432',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+from decouple import config
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'asmidb',
+        'USER': config('DB_USER', default=''),
+        'PASSWORD': config('DB_PASSWORD', default=''),
+        'HOST': config('DB_HOST', default=''),
+        'PORT': '5432',
+    }
+}
 
 
 # Password validation
