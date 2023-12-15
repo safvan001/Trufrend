@@ -131,6 +131,7 @@ class DoctorData(models.Model):
     Education = models.TextField(null=True,blank=True)
     Experience = models.CharField(max_length=100,null=True,blank=True)
     callDuration = models.CharField(max_length=15, default='30 Minutes',null=True,blank=True)
+    is_online = models.BooleanField(default=False)
     from Trufrend.models import Video
     VideoFavour=models.ManyToManyField(Video)
     story=models.ManyToManyField(Stories)
@@ -144,6 +145,11 @@ class DoctorData(models.Model):
 
     def __str__(self):
         return self.username
+
+
+
+
+
 # class Stories(models.Model):
 #     story_file = models.FileField(upload_to='stories/',null=True,blank=True)
 #     created_at = models.DateTimeField(default=timezone.now)

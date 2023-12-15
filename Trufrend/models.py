@@ -72,7 +72,7 @@ class Profile(models.Model):
     language=models.ManyToManyField(Languages)
     videoFavour = models.ManyToManyField(Video)
     from AdminSide.models import DoctorData
-    doctorFavour=models.ManyToManyField(DoctorData)
+    doctorFavour=models.ManyToManyField(DoctorData, related_name='doctor_fav_profiles')
 
     def __str__(self):
         return self.phone_number

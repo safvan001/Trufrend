@@ -18,3 +18,4 @@ admin.site.register(Languages)
 admin.site.register(DoctorData)
 admin.site.register(Quotes)
 
+

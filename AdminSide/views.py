@@ -677,5 +677,82 @@ class QuotesPostingView(APIView):
 #         return self.destroy(request,pk)
 
 
+class SetDoctorOnlineStatus(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+
+        try:
+            # Get the doctor instance
+            doctor = DoctorData.objects.get(username=username)
+
+            # Set is_online to True
+            doctor.is_online = True
+            doctor.save()
+
+            # Serialize the doctor data
+            serializer = DoctorDataSerializer(doctor)
+            serialized_data = serializer.data
+
+            # Include the serialized data in the response
+            response_data = {
+                'detail': 'Doctor data retrieved successfully',
+                'doctor_data': serialized_data,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except DoctorData.DoesNotExist:
+            return Response({'error': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class SetDoctorOffline(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+
+        try:
+            # Get the doctor instance
+            doctor = DoctorData.objects.get(username=username)
+
+            # Set is_online to True
+            doctor.is_online = False
+            doctor.save()
+
+            # Serialize the doctor data
+            serializer = DoctorDataSerializer(doctor)
+            serialized_data = serializer.data
+
+            # Include the serialized data in the response
+            response_data = {
+                'detail': 'Doctor data',
+                'doctor_data': serialized_data,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except DoctorData.DoesNotExist:
+            return Response({'error': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class OnlineDoctorListView(APIView):
+    def get(self, request):
+        try:
+            # Filter doctors with is_online=True
+            online_doctors = DoctorData.objects.filter(is_online=True)
+
+            # Serialize the list of online doctors
+            serializer = DoctorDataSerializer(online_doctors, many=True)
+            serialized_data = serializer.data
+
+            # Include the serialized data in the response
+            response_data = {
+                'detail': 'Online doctors',
+                'online_doctors': serialized_data,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+
 
         # Create your views here.
