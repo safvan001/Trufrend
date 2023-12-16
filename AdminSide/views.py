@@ -179,7 +179,7 @@ class DoctordatView(generics.ListAPIView):
         #     return Response({'error': 'Duplicate entry. Doctor with the same phone number already exists.'},
         #                     status=status.HTTP_409_CONFLICT)
         except Exception as e:
-            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # def get(self,request):
     #     try:
