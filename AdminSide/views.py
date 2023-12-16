@@ -179,8 +179,7 @@ class DoctordatView(generics.ListAPIView):
         #     return Response({'error': 'Duplicate entry. Doctor with the same phone number already exists.'},
         #                     status=status.HTTP_409_CONFLICT)
         except Exception as e:
-            print(str(e))  # Log the exception for debugging
-            return Response({'error': 'Internal Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     # def get(self,request):
     #     try:
@@ -230,6 +229,7 @@ class StoryView(generics.ListCreateAPIView):
         serializer = StoriesSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class AllDoctorsWithStoriesView(BaseView,APIView):
     def get(self, request, *args, **kwargs):
         try:
@@ -252,6 +252,7 @@ class AllDoctorsWithStoriesView(BaseView,APIView):
             return Response(response_data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 #
 #     def delete_old_stories(self):
 #         current_time = timezone.now()

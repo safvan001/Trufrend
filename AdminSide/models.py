@@ -97,9 +97,10 @@ class Languages(models.Model):
     languages=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
         return self.languages
+
 class Stories(models.Model):
     story_file = models.FileField(upload_to='stories/',null=True,blank=True)
-    created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now,null=True,blank=True)
     media_type=models.TextField(null=True,blank=True)
 class DoctorData(models.Model):
     username=models.CharField(max_length=100)
@@ -113,8 +114,8 @@ class DoctorData(models.Model):
         ('others', 'others'),
     )
     Gender=models.CharField(max_length=100,choices=CHOICES,null=True,blank=True,default='Male')
-    Language=models.ManyToManyField(Languages)
-    Specialization=models.ManyToManyField(Specality)
+    Language=models.ManyToManyField(Languages,blank=True)
+    Specialization=models.ManyToManyField(Specality,blank=True)
     CurrentAddress = models.TextField(null=True,blank=True)
     permanentAddress = models.TextField(null=True,blank=True)
     name=models.CharField(max_length=100,blank=True,null=True)
@@ -133,8 +134,8 @@ class DoctorData(models.Model):
     Experience = models.CharField(max_length=100,null=True,blank=True)
     callDuration = models.CharField(max_length=15, default='30 Minutes', null=True, blank=True)
     from Trufrend.models import Video
-    VideoFavour=models.ManyToManyField(Video)
-    story=models.ManyToManyField(Stories)
+    VideoFavour=models.ManyToManyField(Video,blank=True)
+    story=models.ManyToManyField(Stories, blank=True, null=True)
 
     # def save(self, *args, **kwargs):
     #     # Handle password hashing before saving

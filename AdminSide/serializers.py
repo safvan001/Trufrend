@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from AdminSide.models import DoctorData,Stories,Quotes,Languages,Specality #Languages,Specality
+from AdminSide.models import DoctorData,Quotes,Languages,Specality,Stories
 
 
 class LanguageSerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class SpecializationSerializer(serializers.ModelSerializer):
 class StoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stories
-        fields = ['id', 'story_file', 'created_at', 'media_type']
+        fields = '__all__'   #['id', 'story_file', 'created_at', 'media_type']
 class DoctorDataSerializer(serializers.ModelSerializer):
     from Trufrend.serializers import VideoSerializer
     Language=LanguageSerializer(many=True)
