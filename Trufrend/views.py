@@ -432,19 +432,6 @@ class GetUserCountView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 # class VideoFavouriteView(generics.ListCreateAPIView):
 #     queryset = VideoFavourite.objects.all()
 #     serializer_class=VideoFavouriteSerializer

@@ -513,26 +513,34 @@ class AddStoryView(APIView):
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class StoryRetrieveView(APIView):
-    def post(self, request):
-        username = "safvan"
-        try:
-            doctor = DoctorData.objects.get(username=username)
-            stories = Stories.objects.filter(doctor=doctor)
+class DoctorsWithStoriesAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Query doctors with stories
+        doctors_with_stories = DoctorData.objects.filter(story__isnull=False).distinct()
+        serializer = DoctorDataSerializer(doctors_with_stories, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-            serializer = StoriesSerializer(stories, many=True)
-            serialized_data = serializer.data
 
-            response_data = {
-                'detail': 'Stories retrieved successfully',
-                'stories': serialized_data,
-            }
-            return Response(response_data, status=status.HTTP_200_OK)
-
-        except DoctorData.DoesNotExist:
-            return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except Stories.DoesNotExist:
-            return Response({'detail': 'No stories found for the given doctor.'}, status=status.HTTP_404_NOT_FOUND)
+# class StoryRetrieveView(APIView):
+#     def post(self, request):
+#         username = "safvan"
+#         try:
+#             doctor = DoctorData.objects.get(username=username)
+#             stories = Stories.objects.filter(doctor=doctor)
+#
+#             serializer = StoriesSerializer(stories, many=True)
+#             serialized_data = serializer.data
+#
+#             response_data = {
+#                 'detail': 'Stories retrieved successfully',
+#                 'stories': serialized_data,
+#             }
+#             return Response(response_data, status=status.HTTP_200_OK)
+#
+#         except DoctorData.DoesNotExist:
+#             return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+#         except Stories.DoesNotExist:
+#             return Response({'detail': 'No stories found for the given doctor.'}, status=status.HTTP_404_NOT_FOUND)
 
 from django.http import JsonResponse
 from django.core.serializers import serialize
