@@ -12,7 +12,7 @@ from django.contrib.auth.admin import UserAdmin
 #     fieldsets = UserAdmin.fieldsets + (
 #         ('Custom Fields', {'fields': ('Dp',)}),  # Add other custom fields here
 #     )
-# admin.site.register(Stories)
+admin.site.register(Stories)
 admin.site.register(Specality)
 admin.site.register(Languages)
 admin.site.register(DoctorData)

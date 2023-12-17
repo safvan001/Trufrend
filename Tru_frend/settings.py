@@ -81,25 +81,41 @@ WSGI_APPLICATION = 'Tru_frend.wsgi.application'
 # Database
 # # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-# from decouple import config
-#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+from decouple import config
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'asmidb',
-#         'USER': config('DB_USER', default=''),
-#         'PASSWORD': config('DB_PASSWORD', default=''),
-#         'HOST': config('DB_HOST', default=''),
+#         'NAME': 'Trufrenddb',
+#         'USER': 'Trufrend',
+#         'PASSWORD': 'Trufrend',
+#         'HOST': 'trufrenddb.cke3m9ejygyr.us-east-1.rds.amazonaws.com',
 #         'PORT': '5432',
 #     }
 # }
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'Trufrenddb',
+        'USER': config('DB_USER', default='') ,
+        'PASSWORD': config('DB_PASSWORD', default=''),
+        'HOST': config('DB_HOST', default=''),
+        'PORT': '5432',
+    }
+}
+
+
+
+# 'USER': config('DB_USER', default=''),
+# 'PASSWORD': config('DB_PASSWORD', default=''),
+# 'HOST': config('DB_HOST', default=''),
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
