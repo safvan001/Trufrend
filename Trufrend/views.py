@@ -551,7 +551,7 @@ class SetUserOnline(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class SetDoctorOffline(APIView):
+class SetUserOffline(APIView):
     def post(self, request):
         phone = '+91' + request.data.get('phone')
 
