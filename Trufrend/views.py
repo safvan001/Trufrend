@@ -524,6 +524,78 @@ class DoctorAverageRatingView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class SetUserOnline(APIView):
+    def post(self, request):
+        phone = '+91' + request.data.get('phone')
+
+        try:
+            # Get the doctor instance
+            profile = Profile.objects.get(phone_number=phone)
+
+            # Set is_online to True
+            profile.is_online = True
+            profile.save()
+
+            # Serialize the doctor data
+            serializer = ProfileSerializer(profile)
+            serialized_data = serializer.data
+
+            # Include the serialized data in the response
+            response_data = {
+                'detail': 'User retrieved successfully',
+                'User_data': serialized_data,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except DoctorData.DoesNotExist:
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class SetDoctorOffline(APIView):
+    def post(self, request):
+        phone = '+91' + request.data.get('phone')
+
+        try:
+            # Get the doctor instance
+            profile = Profile.objects.get(phone_number=phone)
+
+            # Set is_online to True
+            profile.is_online = False
+            profile.save()
+
+            # Serialize the doctor data
+            serializer = ProfileSerializer(profile)
+            serialized_data = serializer.data
+
+            # Include the serialized data in the response
+            response_data = {
+                'detail': 'User data',
+                'doctor_data': serialized_data,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except DoctorData.DoesNotExist:
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class OnlineUserListView(APIView):
+    def get(self, request):
+        try:
+            # Filter doctors with is_online=True
+            online_user = Profile.objects.filter(is_online=True)
+
+            # Serialize the list of online doctors
+            serializer = ProfileSerializer(online_user, many=True)
+            serialized_data = serializer.data
+
+            # Include the serialized data in the response
+            response_data = {
+                'detail': 'Online users',
+                'online_user': serialized_data,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 # class AverageRatingView(generics.RetrieveAPIView):

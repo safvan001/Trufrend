@@ -526,6 +526,25 @@ class DoctorsWithStoriesAPIView(APIView):
         serializer = DoctorDataSerializer(doctors_with_stories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def delete_old_stories(self):
+        # Get the current time
+        current_time = timezone.now()
+
+        # Iterate over all Stories instances
+        for story in Stories.objects.all():
+            # Access the created_at attribute
+            created_at = story.created_at
+
+            # Define the threshold (e.g., 2 minutes)
+            threshold = timezone.timedelta(minutes=3)
+
+            # Check if the story is older than the threshold
+            if current_time > created_at + threshold:
+                print(f"Deleting story: {story.id}")
+                # Delete the story if it's older than the threshold
+                story.story_file.delete()
+                story.delete()
+
 
 # class StoryRetrieveView(APIView):
 #     def post(self, request):

@@ -68,6 +68,7 @@ class Profile(models.Model):
         ('others', 'others'),
     )
     Gender = models.CharField(max_length=100, choices=CHOICES, null=True, blank=True, default='Male')
+    is_online = models.BooleanField(default=False)
     challenges = models.ManyToManyField(Challenge)
     language=models.ManyToManyField(Languages)
     videoFavour = models.ManyToManyField(Video)
