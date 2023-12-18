@@ -143,8 +143,14 @@ class DoctordatView(generics.ListAPIView):
         Experience=request.data.get('Experience')
         callDuration=request.data.get('callDuration')
         try:
-            if not Language or not Specialization:
-                return Response({'error': 'Language and specialization are not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+            languages_exist = Languages.objects.filter(id__in=Specialization).count() == len(Specialization)
+
+            # Check if Specialization IDs exist
+            specializations_exist = Specality.objects.filter(id__in=Specialization).count() == len(
+                Specialization)
+
+            if not languages_exist or not specializations_exist:
+                return Response({'error': 'Invalid Language or Specialization IDs provided.'},status=status.HTTP_400_BAD_REQUEST)
 
             # DoctorData.save()
             doctor = DoctorData.objects.create(
@@ -593,15 +599,6 @@ def get_all_stories(request):
     response_data = {'doctors': doctor_stories}
 
     return JsonResponse(response_data, safe=False)
-
-
-
-
-
-
-
-
-
 
 
 

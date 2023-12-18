@@ -147,7 +147,11 @@ class DoctorData(models.Model):
 
     def __str__(self):
         return self.username
+class Remainder(models.Model):
+    date=models.DateTimeField(default=timezone.now, null=True, blank=True)
 
+    def __str__(self):
+        return self.date
 
 
 

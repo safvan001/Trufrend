@@ -89,16 +89,6 @@ WSGI_APPLICATION = 'Tru_frend.wsgi.application'
 # }
 from decouple import config
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'Trufrenddb',
-#         'USER': 'Trufrend',
-#         'PASSWORD': 'Trufrend',
-#         'HOST': 'trufrenddb.cke3m9ejygyr.us-east-1.rds.amazonaws.com',
-#         'PORT': '5432',
-#     }
-# }
 
 DATABASES = {
     'default': {
