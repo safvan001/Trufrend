@@ -27,6 +27,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     videoFavour = VideoSerializer(many=True)
     doctorFavour=DoctorDataSerializer(many=True)
     language=LanguageSerilaizer(many=True)
+    recent_calls=DoctorDataSerializer(many=True)
     class Meta:
         model = Profile
         fields = '__all__'

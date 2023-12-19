@@ -536,7 +536,7 @@ class DoctorsWithStoriesAPIView(APIView):
             created_at = story.created_at
 
             # Define the threshold (e.g., 2 minutes)
-            threshold = timezone.timedelta(minutes=3)
+            threshold = timezone.timedelta(minutes=2)
 
             # Check if the story is older than the threshold
             if current_time > created_at + threshold:
@@ -575,7 +575,7 @@ import json
 from django.http import JsonResponse
 
 from django.http import JsonResponse
-
+'''
 def get_all_stories(request):
     # Assuming you have a Stories model
     stories = Stories.objects.all()
@@ -618,6 +618,7 @@ def get_all_stories(request):
     response_data = {'doctors': doctor_stories}
 
     return JsonResponse(response_data, safe=False)
+'''
 
 
 

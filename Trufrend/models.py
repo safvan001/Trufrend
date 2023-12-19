@@ -56,6 +56,7 @@ class Languages(models.Model):
     language=models.CharField(max_length=100,null=True, blank=True)
     def __str__(self):
         return self.language
+
 class Profile(models.Model):
     phone_number = models.CharField(max_length=15,default='')
     dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True,default="img/profile_pictures/userimage.png")
@@ -74,6 +75,8 @@ class Profile(models.Model):
     videoFavour = models.ManyToManyField(Video)
     from AdminSide.models import DoctorData
     doctorFavour=models.ManyToManyField(DoctorData, related_name='doctor_fav_profiles')
+    from AdminSide.models import DoctorData
+    recent_calls=models.ManyToManyField(DoctorData, related_name='recent_calls_of_user')
 
     def __str__(self):
         return self.phone_number
