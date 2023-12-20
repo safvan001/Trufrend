@@ -756,3 +756,21 @@ class get_user_profile(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class UserDelete(APIView):
+    def post(self,request):
+        phone = "+91" + request.data.get('phone')
+
+        if not phone:
+            return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Validate phone number (you may want to replace 'validate_phone' with your own validation logic)
+        try:
+            profile = Profile.objects.get(phone_number=phone)
+            profile.delete()
+            return Response({'error':'User deleted'},status=status.HTTP_200_OK)
+        except Profile.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+

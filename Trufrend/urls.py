@@ -62,6 +62,7 @@ urlpatterns = [
     path('offlineuser/',OnlineUserDecrementView.as_view(),name='offlineuser'),
     path('totalcount/',GetUserCountView.as_view(),name='totalcount'),
     path('get_user_profile/', get_user_profile.as_view(), name='get_user_profile'),
+    path('Userdelete/',UserDelete.as_view(),name='Userdelete'),
 ]
 urlpatterns += router.urls
 if settings.DEBUG:
