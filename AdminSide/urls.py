@@ -32,6 +32,7 @@ urlpatterns = [
     # path('story/',AllDoctorsWithStoriesView.as_view(),name='story'),
     path('getstory/',DoctorsWithStoriesAPIView.as_view(),name="getstory"),
     path('addstory/',AddStoryView.as_view(),name='addstory'),
+    # path('deletestory/',Storydeleting.as_view(),name='delete'),
     # path('getallstory/',get_all_stories,name='getallstory'),
     path('quotes/',QuotesPostingView.as_view(),name='quotes'),
     path('setonline/',SetDoctorOnlineStatus.as_view(),name='doctorlive'),

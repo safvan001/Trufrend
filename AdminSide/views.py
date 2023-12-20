@@ -518,13 +518,26 @@ class AddStoryView(APIView):
         except Exception as e:
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+'''
 class DoctorsWithStoriesAPIView(APIView):
     def get(self, request, *args, **kwargs):
         # Query doctors with stories
         doctors_with_stories = DoctorData.objects.filter(story__isnull=False).distinct()
         serializer = DoctorDataSerializer(doctors_with_stories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+'''
+class DoctorsWithStoriesAPIView(generics.ListAPIView):
+    serializer_class = DoctorDataSerializer
+
+    def get_queryset(self):
+        # Filter doctors with stories
+        doctors_with_stories = DoctorData.objects.filter(story__isnull=False).distinct()
+
+        # Delete old stories
+        self.delete_old_stories()
+
+        # Return the queryset of doctors with stories
+        return doctors_with_stories
 
     def delete_old_stories(self):
         # Get the current time
@@ -536,14 +549,48 @@ class DoctorsWithStoriesAPIView(APIView):
             created_at = story.created_at
 
             # Define the threshold (e.g., 2 minutes)
-            threshold = timezone.timedelta(minutes=2)
+            threshold = timezone.timedelta(days=1)
 
             # Check if the story is older than the threshold
             if current_time > created_at + threshold:
-                print(f"Deleting story: {story.id}")
                 # Delete the story if it's older than the threshold
                 story.story_file.delete()
                 story.delete()
+
+
+# class Storydeleting(generics.ListAPIView):
+#     queryset = Stories.objects.all()
+#     serializer_class = StoriesSerializer
+#
+#     def delete_old_stories(self):
+#         # Get the current time
+#         current_time = timezone.now()
+#
+#         # Iterate over all Stories instances
+#         for story in Stories.objects.all():
+#             # Access the created_at attribute
+#             created_at = story.created_at
+#
+#             # Define the threshold (e.g., 2 minutes)
+#             threshold = timezone.timedelta(minutes=3)
+#
+#             # Check if the story is older than the threshold
+#             if current_time > created_at + threshold:
+#                 # Delete the story if it's older than the threshold
+#                 story.story_file.delete()
+#                 story.delete()
+#
+#     def list(self, request, *args, **kwargs):
+#         # Delete old stories
+#         self.delete_old_stories()
+#
+#         # Return the list of stories
+#         queryset = Stories.objects.all()
+#         serializer = StoriesSerializer(queryset, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
 
 # class StoryRetrieveView(APIView):
