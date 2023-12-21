@@ -34,7 +34,7 @@ class InitiateVerificationView(APIView):
         AUTH_TOKEN = config('TWILIO_AUTH_TOKEN', default='')
         VERIFY_SERVICE_SID = config('TWILIO_VERIFY_SERVICE_SID', default='')
         # country_code=request.data.get('country_code')
-        phone = "+91" + request.data.get('phone')
+        phone = request.data.get('phone')
         profile, created = Profile.objects.get_or_create(phone_number=phone)
         profile.save()
         if not phone:
@@ -56,7 +56,7 @@ class VerifyUserView(APIView):
         AUTH_TOKEN = config('TWILIO_AUTH_TOKEN', default='')
         VERIFY_SERVICE_SID = config('TWILIO_VERIFY_SERVICE_SID', default='')
         #print(request.data)
-        phone = "+91" + request.data.get('phone')
+        phone = request.data.get('phone')
         code = request.data.get('code')
         # print(phone)
         if not phone or not code:
@@ -91,7 +91,7 @@ class Dp(generics.CreateAPIView):
 class Nickname(APIView):
     def post(self, request):
         nick_name = request.data.get('nick_name')
-        phone = "+91" + request.data.get('phone')
+        phone = request.data.get('phone')
          # Assuming you send the profile ID along with nick_name
         try:
             profile = Profile.objects.get(phone_number=phone)
@@ -111,7 +111,7 @@ class ChallengeList(generics.ListAPIView):
 class AddChallenges(APIView):
     def post(self, request):
         try:
-            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
             challenges_ids = request.data.get('challenges_ids', [])
             # Default to an empty list if not provided
 
@@ -164,7 +164,7 @@ class ProfileListCreateAPIView(APIView):
     # serializer_class = ProfileSerializer
 
     def post(self, request):
-        phone = "+91"+request.data.get('phone')
+        phone = request.data.get('phone')
         nick_name = request.data.get('nick_name')
         name = request.data.get('name')
         dp=request.data.get('dp')
@@ -208,7 +208,7 @@ class ProfileListCreateAPIView(APIView):
 class AddLanguage(APIView):
     def post(self,request):
         try:
-            phone='+91'+request.data.get('phone')
+            phone=request.data.get('phone')
             Language_ids = request.data.get('Language_ids', [])
 
             if not Language_ids:
@@ -260,7 +260,7 @@ class RemoveFromFavoriteView(generics.DestroyAPIView):
 class AddVideoFavouriteView(APIView):
     def post(self,request):
         try:
-            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
             video_ids = request.data.get('video_ids', [])
             # Default to an empty list if not provided
 
@@ -298,7 +298,7 @@ class AddVideoFavouriteView(APIView):
 class DeleteVideoFavouriteView(APIView):
     def post(self, request):
         try:
-            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
             video_ids = request.data.get('video_ids', [])
 
             if not phone or not video_ids:
@@ -324,7 +324,7 @@ class DeleteVideoFavouriteView(APIView):
 class AddDoctorFavourite(APIView):
     def post(self,request):
         try:
-            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
             doctor_ids = request.data.get('doctor_ids', [])
             # Default to an empty list if not provided
 
@@ -362,7 +362,7 @@ class AddDoctorFavourite(APIView):
 class RemoveDoctorFavourite(APIView):
     def post(self, request):
         try:
-            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
             doctor_ids = request.data.get('doctor_ids', [])
 
             if not doctor_ids:
@@ -396,7 +396,7 @@ class RemoveDoctorFavourite(APIView):
 class RecentCallsofUser(APIView):
     def post(self,request):
         try:
-            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
             doctor_ids = request.data.get('doctor_ids', [])
             # Default to an empty list if not provided
 
@@ -434,7 +434,7 @@ class RecentCallsofUser(APIView):
 class RemoveFromRecent(APIView):
     def post(self, request):
         try:
-            phone = "+91" + request.data.get('phone')  # Change 'id' to 'profile_id'
+            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
             doctor_ids = request.data.get('doctor_ids', [])
 
             if not doctor_ids:
@@ -544,7 +544,7 @@ from django.shortcuts import get_object_or_404
 
 class AddRatingView(APIView):
     def post(self, request):
-        phone = '+91' + request.data.get('phone')
+        phone = request.data.get('phone')
         username = request.data.get('username')
         rating_value = request.data.get('rating_value')
         try:
@@ -598,7 +598,7 @@ class DoctorAverageRatingView(APIView):
 
 class SetUserOnline(APIView):
     def post(self, request):
-        phone = '+91' + request.data.get('phone')
+        phone = request.data.get('phone')
 
         try:
             # Get the doctor instance
@@ -625,7 +625,7 @@ class SetUserOnline(APIView):
 
 class SetUserOffline(APIView):
     def post(self, request):
-        phone = '+91' + request.data.get('phone')
+        phone = request.data.get('phone')
 
         try:
             # Get the doctor instance
@@ -690,7 +690,7 @@ class OnlineUserListView(APIView):
 
 class ContactUsCreateAPIView(APIView):
     def post(self, request):
-        phone_no= "+91" + request.data.get('phone_no')
+        phone_no= request.data.get('phone_no')
         firstname = request.data.get('firstname')
         Lastname = request.data.get('Lastname')
         email = request.data.get('email')
@@ -729,7 +729,6 @@ class ContactUsCreateAPIView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class UserCount(APIView):
     def get(self,request):
         try:
@@ -742,7 +741,7 @@ class UserCount(APIView):
             # Create your views here.
 class get_user_profile(APIView):
     def post(self, request):
-        phone = "+91" + request.data.get('phone')
+        phone = request.data.get('phone')
 
         if not phone:
             return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -758,7 +757,7 @@ class get_user_profile(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class UserDelete(APIView):
     def post(self,request):
-        phone = "+91" + request.data.get('phone')
+        phone = request.data.get('phone')
 
         if not phone:
             return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
