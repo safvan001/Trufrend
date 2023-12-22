@@ -805,6 +805,7 @@ class SetDoctorOffline(APIView):
 
             # Set is_online to True
             doctor.is_online = False
+            doctor.created_at = timezone.now()
             doctor.save()
 
             # Serialize the doctor data
