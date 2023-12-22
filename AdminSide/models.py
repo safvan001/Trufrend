@@ -133,6 +133,7 @@ class DoctorData(models.Model):
     Education = models.TextField(null=True,blank=True)
     Experience = models.CharField(max_length=100,null=True,blank=True)
     callDuration = models.CharField(max_length=15, default='30 Minutes', null=True, blank=True)
+    created_at=models.DateTimeField(default=timezone.now,null=True,blank=True)
     from Trufrend.models import Video
     VideoFavour=models.ManyToManyField(Video,blank=True)
     story=models.ManyToManyField(Stories, blank=True, null=True)
