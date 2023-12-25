@@ -168,7 +168,7 @@ class ProfileListCreateAPIView(APIView):
         nick_name = request.data.get('nick_name')
         name = request.data.get('name')
         dp=request.data.get('dp')
-        DOB=request.data.get('DOB')
+        # DOB=request.data.get('DOB')
         Gender=request.data.get('Gender')
         challenges=request.data.get('challenges',[])
         language=request.data.get('language',[])
@@ -178,7 +178,7 @@ class ProfileListCreateAPIView(APIView):
             profile = Profile.objects.get(phone_number=phone)
             profile.nick_name = nick_name
             profile.name = name
-            profile.DOB=DOB
+            # profile.DOB=DOB
             profile.Gender=Gender
             profile.challenges.add(*challenges)
             profile.language.add(*language)
