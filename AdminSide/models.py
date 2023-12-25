@@ -99,7 +99,7 @@ class Languages(models.Model):
         return self.languages
 
 class Stories(models.Model):
-    story_file = models.FileField(upload_to='stories/',null=True,blank=True)
+    story_file = models.FileField(upload_to='stories/',blank=True,default='')
     created_at = models.DateTimeField(default=timezone.now,null=True,blank=True)
     media_type=models.TextField(null=True,blank=True)
 class DoctorData(models.Model):
