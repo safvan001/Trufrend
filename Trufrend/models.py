@@ -62,7 +62,7 @@ class Profile(models.Model):
     dp = models.ImageField(upload_to='img/profile_pictures', null=True, blank=True,default="img/profile_pictures/userimage.png")
     name = models.CharField(max_length=100)
     nick_name = models.CharField(max_length=50)
-    DOB=models.DateField(null=True,blank=True)
+    # DOB=models.DateField(null=True,blank=True)
     CHOICES = (
         ('Male', 'Male'),
         ('Female', 'Female'),

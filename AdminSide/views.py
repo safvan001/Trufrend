@@ -141,7 +141,7 @@ class DoctordatView(generics.ListAPIView):
         Aboutme=request.data.get('Aboutme')
         Education=request.data.get('Education')
         Experience=request.data.get('Experience')
-        callDuration=request.data.get('callDuration')
+        # callDuration=request.data.get('callDuration')
         try:
             languages_exist = Languages.objects.filter(id__in=Specialization).count() == len(Specialization)
 
@@ -175,7 +175,7 @@ class DoctordatView(generics.ListAPIView):
                 Aboutme=Aboutme,
                 Education=Education,
                 Experience=Experience,
-                callDuration=callDuration
+                # callDuration=callDuration
             )
             doctor.Language.add(*Language)
             doctor.Specialization.add(*Specialization)
