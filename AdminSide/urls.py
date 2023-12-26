@@ -23,7 +23,7 @@ app_name="AdminSide"
 
 
 urlpatterns = [
-    path('Doctordetail/',DoctordatView.as_view(),name='doctordetail'),
+    path('Doctordetail/',DoctordataView.as_view(),name='doctordetail'),
     path('Doctordetail/<str:username>/', DoctorUpdateView.as_view(), name='doctor-detail'),
     path('addlanguage/',AddLanguage.as_view(),name='addlanguage'),
     path('addspeciality/',AddSpecialization.as_view(),name='addspeciality'),
@@ -35,6 +35,8 @@ urlpatterns = [
     # path('deletestory/',Storydeleting.as_view(),name='delete'),
     # path('getallstory/',get_all_stories,name='getallstory'),
     path('quotes/',QuotesPostingView.as_view(),name='quotes'),
+    path('adminregister/',AdminUserRegisteration.as_view(),name='adminuserregistertaion'),
+    path('adminlogin/',AdminLogin.as_view(),name='AdminLogin'),
     path('setonline/',SetDoctorOnlineStatus.as_view(),name='doctorlive'),
     path('onlinedoctor/',OnlineDoctorListView.as_view(),name='onlinedoctor'),
     path('setoffline/',SetDoctorOffline.as_view(),name='setoffline')

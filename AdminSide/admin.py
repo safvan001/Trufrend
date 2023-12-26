@@ -1,5 +1,5 @@
 from django.contrib import admin
-from AdminSide.models import Quotes,Languages,Specality,Stories,DoctorData,Remainder
+from AdminSide.models import Quotes,Languages,Specality,Stories,DoctorData,Remainder,AdminUser
 from django.contrib.auth.admin import UserAdmin
 # from .models import DoctorData,Stories
 
@@ -17,6 +17,7 @@ admin.site.register(Specality)
 admin.site.register(Remainder)
 admin.site.register(Languages)
 admin.site.register(DoctorData)
+admin.site.register(AdminUser)
 admin.site.register(Quotes)
 
 

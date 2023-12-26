@@ -148,6 +148,13 @@ class DoctorData(models.Model):
 
     def __str__(self):
         return self.username
+class AdminUser(models.Model):
+    email=models.EmailField(null=True,blank=True)
+    password=models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.email
+
 class Remainder(models.Model):
     date=models.DateTimeField(default=timezone.now, null=True, blank=True)
 
@@ -156,15 +163,6 @@ class Remainder(models.Model):
 
 
 
-
-# class Stories(models.Model):
-#     story_file = models.FileField(upload_to='stories/',null=True,blank=True)
-#     created_at = models.DateTimeField(default=timezone.now)
-#     doctor = models.ForeignKey(DoctorData, on_delete=models.CASCADE, related_name='stories',default='')
-#     media_type=models.TextField(null=True,blank=True)
-
-    # def __str__(self):
-    #     return str(self.story_file)
 class Quotes(models.Model):
     quotes=models.TextField(null=True,blank=True)
     author=models.CharField(max_length=200)

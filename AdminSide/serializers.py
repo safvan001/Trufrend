@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from AdminSide.models import DoctorData,Quotes,Languages,Specality,Stories
+from AdminSide.models import DoctorData,Quotes,Languages,Specality,Stories,AdminUser
 
 
 class LanguageSerializer(serializers.ModelSerializer):
@@ -35,6 +35,10 @@ from django.http import JsonResponse
 class QuotesSerializer(serializers.ModelSerializer):
     class Meta:
         model=Quotes
+        fields='__all__'
+class AdminUserSerilaizer(serializers.ModelSerializer):
+    class Meta:
+        model=AdminUser
         fields='__all__'
 
 

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics,mixins
-from AdminSide.models import DoctorData,Quotes,Languages,Specality,Stories
+from AdminSide.models import DoctorData,Quotes,Languages,Specality,Stories,AdminUser
 from rest_framework.views import APIView
-from AdminSide.serializers import  DoctorDataSerializer,QuotesSerializer,StoriesSerializer #LanguageSerializer,SpecializationSerializer,StoriesSerializer
+from AdminSide.serializers import  DoctorDataSerializer,QuotesSerializer,StoriesSerializer,AdminUserSerilaizer #LanguageSerializer,SpecializationSerializer,StoriesSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
@@ -113,7 +113,7 @@ class BaseView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class DoctordatView(generics.ListAPIView):
+class DoctordataView(generics.ListAPIView):
     queryset = DoctorData.objects.all()
     serializer_class =  DoctorDataSerializer
 
@@ -686,26 +686,41 @@ def get_all_stories(request):
 #             return Response(response_data, status=status.HTTP_200_OK)
 #         except DoctorData.DoesNotExist:
 #             return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-
 class QuotesPostingView(APIView):
-    def post(self,request):
-        quotes=request.data.get('quotes')
-        author=request.data.get('author')
+    def post(self, request):
+        quotes = request.data.get('quotes')
+        author = request.data.get('author')
+
+        # Check if a quote already exists
+        existing_quote = Quotes.objects.first()
+
         try:
-            quote=Quotes.objects.create(quotes=quotes,author=author)
-            serializer=QuotesSerializer(quote)
-            serialized_data=serializer.data
+            if existing_quote:
+                # Update the existing quote
+                existing_quote.quotes = quotes
+                existing_quote.author = author
+                existing_quote.save()
+                quote = existing_quote
+            else:
+                # Create a new quote
+                quote = Quotes.objects.create(quotes=quotes, author=author)
+
+            serializer = QuotesSerializer(quote)
+            serialized_data = serializer.data
+
             response_data = {
-                'detail': 'Quotes added successful',
+                'detail': 'Quotes added successfully',
                 'story': serialized_data,
             }
+
             return Response(response_data, status=status.HTTP_200_OK)
+
         except DoctorData.DoesNotExist:
-            return Response({'detail': 'Unable to found instance of Quotes .'}, status=status.HTTP_404_NOT_FOUND)
-    def get(self,request):
+            return Response({'detail': 'Unable to find instance of Quotes.'}, status=status.HTTP_404_NOT_FOUND)
+
+    def get(self, request):
         try:
-            quote=Quotes.objects.all()
+            quote = Quotes.objects.all()
             serializer = QuotesSerializer(quote, many=True)
 
             # Return the serialized data as a JSON response
@@ -713,6 +728,34 @@ class QuotesPostingView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# class QuotesPostingView(APIView):
+#     def post(self,request):
+#         quotes=request.data.get('quotes')
+#         author=request.data.get('author')
+#         try:
+#             quote=Quotes.objects.create(quotes=quotes,author=author)
+#             serializer=QuotesSerializer(quote)
+#             serialized_data=serializer.data
+#             response_data = {
+#                 'detail': 'Quotes added successful',
+#                 'story': serialized_data,
+#             }
+#             return Response(response_data, status=status.HTTP_200_OK)
+#         except DoctorData.DoesNotExist:
+#             return Response({'detail': 'Unable to found instance of Quotes .'}, status=status.HTTP_404_NOT_FOUND)
+#     def get(self,request):
+#
+#         try:
+#             quote=Quotes.objects.all()
+#             serializer = QuotesSerializer(quote, many=True)
+#
+#             # Return the serialized data as a JSON response
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # class LanguageView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
@@ -822,6 +865,44 @@ class SetDoctorOffline(APIView):
             return Response({'error': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class AdminUserRegisteration(APIView):
+    def post(self,request):
+        email=request.data.get('email')
+        password=request.data.get('password')
+        try:
+            user=AdminUser.objects.create(email=email,password=password)
+            serializer=AdminUserSerilaizer(user)
+            serilaizer_data=serializer.data
+            response_data = {
+                'detail': 'User Created Successfully',
+                'user_data': serilaizer_data
+            }
+            return Response(response_data,status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class AdminLogin(APIView):
+    def post(self,request):
+        email=request.data.get('email')
+        password=request.data.get('password')
+        try:
+            user=AdminUser.objects.get(email=email)
+        except AdminUser.DoesNotExist:
+            return Response({'error': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
+        if password==user.password:
+            seriliazer=AdminUserSerilaizer(user)
+            seriliazer_data=seriliazer.data
+            response_data={
+                'detail':'Authentication Successfull',
+                'user_data':seriliazer_data
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        else:
+            # Authentication failed
+            return Response({'detail': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+
 
 
 
