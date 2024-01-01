@@ -606,6 +606,9 @@ class GetUserCountView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class WellnessVideos(generics.ListCreateAPIView):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
 
 
 from django.shortcuts import get_object_or_404
