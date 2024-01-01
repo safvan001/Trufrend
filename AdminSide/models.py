@@ -1,12 +1,8 @@
-from django.db import models
-from django.contrib.auth.hashers import make_password,check_password
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
-# from Trufrend.models import VideoPack
+from django.contrib.auth.hashers import make_password
 from django.db import models
 from django.utils import timezone
+
 
 # class DoctorDataManager(BaseUserManager):
 #     def create_user(self, username, password=None, **extra_fields):
@@ -88,11 +84,11 @@ from django.utils import timezone
 #     def __str__(self):
 #         return self.username
 
-
 class Specality(models.Model):
     specialization=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
         return self.specialization
+
 class Languages(models.Model):
     languages=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
@@ -102,6 +98,7 @@ class Stories(models.Model):
     story_file = models.FileField(upload_to='stories/',blank=True,default='')
     created_at = models.DateTimeField(default=timezone.now,null=True,blank=True)
     media_type=models.TextField(null=True,blank=True)
+
 class DoctorData(models.Model):
     username=models.CharField(max_length=100)
     password=models.CharField(max_length=128)
@@ -136,6 +133,9 @@ class DoctorData(models.Model):
     created_at=models.DateTimeField(default=timezone.now,null=True,blank=True)
     from Trufrend.models import Video
     VideoFavour=models.ManyToManyField(Video,blank=True)
+    # from Trufrend.models import Profile
+    # recent_call = models.ManyToManyField(Profile, blank=True)
+    # recent_call = models.ManyToManyField("Trufrend.Profile", blank=True)
     story=models.ManyToManyField(Stories, blank=True, null=True)
 
     # def save(self, *args, **kwargs):
@@ -148,20 +148,27 @@ class DoctorData(models.Model):
 
     def __str__(self):
         return self.username
+
+
 class AdminUser(models.Model):
     email=models.EmailField(null=True,blank=True)
     password=models.CharField(max_length=128)
 
+    def save(self, *args, **kwargs):
+        # Hash the password before saving
+        self.password = make_password(self.password)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.email
+
+
 
 class Remainder(models.Model):
     date=models.DateTimeField(default=timezone.now, null=True, blank=True)
 
     def __str__(self):
         return self.date
-
-
 
 class Quotes(models.Model):
     quotes=models.TextField(null=True,blank=True)

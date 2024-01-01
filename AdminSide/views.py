@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
 from Trufrend.models import Video
+from Trufrend.models import Profile
 
 # class DoctorDataView(generics.ListCreateAPIView):
 #     queryset = DoctorData.objects.all()
@@ -259,61 +260,15 @@ class AllDoctorsWithStoriesView(BaseView,APIView):
         except Exception as e:
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-#
-#     def delete_old_stories(self):
-#         current_time = timezone.now()
-#
-#         for story in Stories.objects.all():
-#             created_at = story.created_at
-#             threshold = timezone.timedelta(minutes=3)
-#
-#             if current_time > created_at + threshold:
-#                 story.story_file.delete()
-#                 story.delete()
-#
-#     def list(self, request, *args, **kwargs):
-#         # Delete old stories
-#         self.delete_old_stories()
-#
-#         # Return the list of stories
-#         queryset = Stories.objects.all()
-#         serializer = StoriesSerializer(queryset, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
-
 
 class DoctorUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DoctorData.objects.all()
     serializer_class = DoctorDataSerializer
     lookup_field = 'username'
 
-# class StoryView(generics.ListCreateAPIView):
-#     queryset = Stories.objects.all()
-#     serializer_class = StoriesSerializer
-#
-#     def get(self, request, *args, **kwargs):
-#         # Get the current time
-#         current_time = timezone.now()
-#
-#         # Iterate over all Stories instances
-#         for story in Stories.objects.all():
-#             # Access the created_at attribute
-#             created_at = story.created_at
-#
-#             # Define the threshold (e.g., 2 minutes)
-#             threshold = timezone.timedelta(days=1)
-#
-#             # Check if the story is older than the threshold
-#             if current_time > created_at + threshold:
-#                 # Delete the story if it's older than the threshold
-#                 story.story_file.delete()
-#                 story.delete()
-#
-#         return self.list(request, *args, **kwargs)
 class DoctorVideoFavouriteView(APIView):
     def post(self, request):
+
         try:
             username = request.data.get('username')  # Change 'id' to 'profile_id'
             video_ids = request.data.get('video_ids', [])
@@ -378,115 +333,6 @@ class DeleteDrVideoFavouriteView(APIView):
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-# class StoryCreateView(APIView):
-#     def post(self, request):
-#
-#         username = request.data.get('username')
-#         story = request.data.get('story')
-#         media_type=request.data.get('media_type')
-#
-#         try:
-#             doctor = DoctorData.objects.get(username=username)
-#             sto=Stories.objects.create(doctor=doctor, story_file=story, media_type=media_type)
-#
-#             serializer = StoriesSerializer(sto)
-#             serialized_data = serializer.data
-#
-#             # Include the serialized data in the response
-#             response_data = {
-#                 'detail': 'Story added successful',
-#                 'story': serialized_data,
-#             }
-#             return Response(response_data, status=status.HTTP_200_OK)
-#             # doctor.save()
-#             # return Response({'detail': 'Story created successfully.'}, status=status.HTTP_201_CREATED)
-#         except DoctorData.DoesNotExist:
-#             return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
-#
-#
-#     # def get(self, request, *args, **kwargs):
-#     #     # Call the list method to return the list of stories
-#     #     return self.list(request, *args, **kwargs)
-#
-#     def delete_old_stories(self):
-#         # Get the current time
-#         current_time = timezone.now()
-#
-#         # Iterate over all Stories instances
-#         for story in Stories.objects.all():
-#             # Access the created_at attribute
-#             created_at = story.created_at
-#
-#             # Define the threshold (e.g., 2 minutes)
-#             threshold = timezone.timedelta(minutes=3)
-#
-#             # Check if the story is older than the threshold
-#             if current_time > created_at + threshold:
-#                 # Delete the story if it's older than the threshold
-#                 story.story_file.delete()
-#                 story.delete()
-#
-#     def list(self, request, *args, **kwargs):
-#         # Delete old stories
-#         self.delete_old_stories()
-#
-#         # Return the list of stories
-#         queryset = Stories.objects.all()
-#         serializer = StoriesSerializer(queryset, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-'''
-class StoryCreateView(APIView):
-    def post(self, request):
-        username = request.data.get('username')
-        story = request.data.get('story')
-        media_type = request.data.get('media_type')
-
-        try:
-            doctor = DoctorData.objects.get(username=username)
-            sto = Stories.objects.create(doctor=doctor, story_file=story, media_type=media_type)
-
-            serializer = StoriesSerializer(sto)
-            serialized_data = serializer.data
-
-            # Include the serialized data in the response
-            response_data = {
-                'detail': 'Story added successfully',
-                'story': serialized_data,
-            }
-            return Response(response_data, status=status.HTTP_201_CREATED)
-        except DoctorData.DoesNotExist:
-            return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    # def delete_old_stories(self):
-    #     # Get the current time
-    #     current_time = timezone.now()
-    #
-    #     # Iterate over all Stories instances
-    #     for story in Stories.objects.all():
-    #         # Access the created_at attribute
-    #         created_at = story.created_at
-    #
-    #         # Define the threshold (e.g., 2 minutes)
-    #         threshold = timezone.timedelta(minutes=3)
-    #
-    #         # Check if the story is older than the threshold
-    #         if current_time > created_at + threshold:
-    #             # Delete the story if it's older than the threshold
-    #             story.story_file.delete()
-    #             story.delete()
-    #
-    # def list(self, request, *args, **kwargs):
-    #     # Delete old stories
-    #     self.delete_old_stories()
-    #
-    #     # Return the list of stories
-    #     queryset = Stories.objects.all()
-    #     serializer = StoriesSerializer(queryset, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
-'''
 
 class AddStoryView(APIView):
     def post(self, request, *args, **kwargs):
@@ -557,63 +403,6 @@ class DoctorsWithStoriesAPIView(generics.ListAPIView):
                 story.story_file.delete()
                 story.delete()
 
-
-# class Storydeleting(generics.ListAPIView):
-#     queryset = Stories.objects.all()
-#     serializer_class = StoriesSerializer
-#
-#     def delete_old_stories(self):
-#         # Get the current time
-#         current_time = timezone.now()
-#
-#         # Iterate over all Stories instances
-#         for story in Stories.objects.all():
-#             # Access the created_at attribute
-#             created_at = story.created_at
-#
-#             # Define the threshold (e.g., 2 minutes)
-#             threshold = timezone.timedelta(minutes=3)
-#
-#             # Check if the story is older than the threshold
-#             if current_time > created_at + threshold:
-#                 # Delete the story if it's older than the threshold
-#                 story.story_file.delete()
-#                 story.delete()
-#
-#     def list(self, request, *args, **kwargs):
-#         # Delete old stories
-#         self.delete_old_stories()
-#
-#         # Return the list of stories
-#         queryset = Stories.objects.all()
-#         serializer = StoriesSerializer(queryset, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
-
-
-# class StoryRetrieveView(APIView):
-#     def post(self, request):
-#         username = "safvan"
-#         try:
-#             doctor = DoctorData.objects.get(username=username)
-#             stories = Stories.objects.filter(doctor=doctor)
-#
-#             serializer = StoriesSerializer(stories, many=True)
-#             serialized_data = serializer.data
-#
-#             response_data = {
-#                 'detail': 'Stories retrieved successfully',
-#                 'stories': serialized_data,
-#             }
-#             return Response(response_data, status=status.HTTP_200_OK)
-#
-#         except DoctorData.DoesNotExist:
-#             return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
-#         except Stories.DoesNotExist:
-#             return Response({'detail': 'No stories found for the given doctor.'}, status=status.HTTP_404_NOT_FOUND)
-
 from django.http import JsonResponse
 from django.core.serializers import serialize
 from rest_framework import viewsets
@@ -622,70 +411,8 @@ import json
 from django.http import JsonResponse
 
 from django.http import JsonResponse
-'''
-def get_all_stories(request):
-    # Assuming you have a Stories model
-    stories = Stories.objects.all()
-
-    # Serialize the stories using the StoriesSerializer
-    serialized_stories = StoriesSerializer(stories, many=True).data
-
-    # Organize stories by doctor username
-    doctor_stories = []
-
-    for serialized_story in serialized_stories:
-        doctor_data = serialized_story['doctor']
-
-        # Check if the doctor is already in the list
-        existing_doctor = next((doc for doc in doctor_stories if doc['doctor_details']['username'] == doctor_data['username']), None)
-
-        if existing_doctor:
-            # Add the story to the existing doctor's list
-            story = {
-                'story_file': serialized_story['story_file'],
-                'created_at': serialized_story['created_at'],
-                'media_type': serialized_story['media_type']
-            }
-            existing_doctor['stories'].append(story)
-        else:
-            # Create a new doctor entry with details and story
-            doctor_story = {
-                'doctor_details': doctor_data,  # Store doctor details
-                'stories': [
-                    {
-                        'story_file': serialized_story['story_file'],
-                        'created_at': serialized_story['created_at'],
-                        'media_type': serialized_story['media_type']
-                    }
-                ]
-            }
-            doctor_stories.append(doctor_story)
-
-    # Wrap the list in a dictionary with the "doctors" key
-    response_data = {'doctors': doctor_stories}
-
-    return JsonResponse(response_data, safe=False)
-'''
 
 
-
-# class StoryGetView(APIView):
-#     def post(self,request):
-#         username=request.data.get('username')
-#         story=Stories.objects.filter()
-#         try:
-#             doctor = Stories.doctor.object.get(username=username)
-#             story=Stories.objects.filter(doctor=doctor)
-#             serializer = StoriesSerializer(story)
-#             serialized_data = serializer.data
-#
-#         # Include the serialized data in the response
-#             response_data = {
-#                 'story': serialized_data,
-#             }
-#             return Response(response_data, status=status.HTTP_200_OK)
-#         except DoctorData.DoesNotExist:
-#             return Response({'detail': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
 class QuotesPostingView(APIView):
     def post(self, request):
         quotes = request.data.get('quotes')
@@ -712,7 +439,6 @@ class QuotesPostingView(APIView):
                 'detail': 'Quotes added successfully',
                 'story': serialized_data,
             }
-
             return Response(response_data, status=status.HTTP_200_OK)
 
         except DoctorData.DoesNotExist:
@@ -728,69 +454,6 @@ class QuotesPostingView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# class QuotesPostingView(APIView):
-#     def post(self,request):
-#         quotes=request.data.get('quotes')
-#         author=request.data.get('author')
-#         try:
-#             quote=Quotes.objects.create(quotes=quotes,author=author)
-#             serializer=QuotesSerializer(quote)
-#             serialized_data=serializer.data
-#             response_data = {
-#                 'detail': 'Quotes added successful',
-#                 'story': serialized_data,
-#             }
-#             return Response(response_data, status=status.HTTP_200_OK)
-#         except DoctorData.DoesNotExist:
-#             return Response({'detail': 'Unable to found instance of Quotes .'}, status=status.HTTP_404_NOT_FOUND)
-#     def get(self,request):
-#
-#         try:
-#             quote=Quotes.objects.all()
-#             serializer = QuotesSerializer(quote, many=True)
-#
-#             # Return the serialized data as a JSON response
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-#
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# class LanguageView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
-#     queryset = Languages.objects.all()
-#     serializer_class = LanguageSerializer
-#     def get(self,request):
-#         return self.list(request)
-#     def post(self,request):
-#         return self.create(request)
-#
-# class LanguageUpdateanddeletView(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
-#     queryset=Languages.objects.all()
-#     serializer_class = LanguageSerializer
-#     def get(self,request,pk):
-#         return self.retrieve(request,pk)
-#     def put(self,request,pk):
-#         return self.update(request,pk)
-#     def delete(self,request,pk):
-#         return self.destroy(request,pk)
-# class SpecializationView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
-#     queryset = Specality.objects.all()
-#     serializer_class = SpecializationSerializer
-#     def get(self,request):
-#         return self.list(request)
-#     def post(self,request):
-#         return self.create(request)
-# class SpecializationUpdateandDeleteView(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
-#     queryset = Specality.objects.all()
-#     serializer_class = SpecializationSerializer
-#     def get(self,request,pk):
-#         return self.retrieve(request,pk)
-#     def put(self,request,pk):
-#         return self.update(request,pk)
-#     def delete(self,request,pk):
-#         return self.destroy(request,pk)
 
 class SetDoctorOnlineStatus(APIView):
 
@@ -866,49 +529,81 @@ class SetDoctorOffline(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class AdminUserRegisteration(APIView):
-    def post(self,request):
-        email=request.data.get('email')
-        password=request.data.get('password')
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
         try:
-            user=AdminUser.objects.create(email=email,password=password)
-            serializer=AdminUserSerilaizer(user)
-            serilaizer_data=serializer.data
+            user = AdminUser.objects.create(email=email, password=password)
+            serializer = AdminUserSerilaizer(user)
+            serializer_data = serializer.data
             response_data = {
                 'detail': 'User Created Successfully',
-                'user_data': serilaizer_data
+                'user_data': serializer_data
             }
-            return Response(response_data,status=status.HTTP_200_OK)
+            return Response(response_data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+from django.contrib.auth.hashers import check_password
 class AdminLogin(APIView):
-    def post(self,request):
-        email=request.data.get('email')
-        password=request.data.get('password')
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
         try:
-            user=AdminUser.objects.get(email=email)
+            user = AdminUser.objects.get(email=email)
         except AdminUser.DoesNotExist:
-            return Response({'error': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
-        if password==user.password:
-            seriliazer=AdminUserSerilaizer(user)
-            seriliazer_data=seriliazer.data
-            response_data={
-                'detail':'Authentication Successfull',
-                'user_data':seriliazer_data
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if check_password(password, user.password):
+            serializer = AdminUserSerilaizer(user)
+            serializer_data = serializer.data
+            response_data = {
+                'detail': 'Authentication Successful',
+                'user_data': serializer_data
             }
             return Response(response_data, status=status.HTTP_200_OK)
         else:
             # Authentication failed
             return Response({'detail': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
+class RecentCallsofDoctor(APIView):
+    def post(self,request):
 
+        try:
+            username=request.data.get('username')
+            phone = request.data.get('phone',[])  # Change 'id' to 'profile_id'
+            # doctor_ids = request.data.get('doctor_ids', [])
+            # Default to an empty list if not provided
+            if not phone:
+                return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
+            # Check if the profile_id is a valid number
+            if not username:
+                return Response({'error': 'username provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
+            # Get the profile object
+            try:
+                doctor= DoctorData.objects.get(username=username)
+            except DoctorData.DoesNotExist:
+                return Response({'error': 'doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+            # Validate challenge IDs and ensure uniqueness
+            valid_user = []
+            for user in phone:
+                try:
+                    profile = Profile.objects.get(phone_number=user)
+                    if profile not in valid_user:  # Ensure uniqueness
+                        valid_user.append(profile)
+                except Profile.DoesNotExist:
+                    return Response({'error': f'User with ID {user} not found.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
 
+            # Add the unique challenges to the profile using the many-to-many relationship
+            doctor.recent_call.set(*valid_user)
+            doctor.save()
 
-
-
-
-
+            return Response({'message': 'Recent Calls added to the profile successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(str(e))  # Log the exception for debugging
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 

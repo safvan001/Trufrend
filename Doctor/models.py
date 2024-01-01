@@ -1,9 +1,10 @@
 from django.db import models
 from django.utils import timezone
-class Stories(models.Model):
-    story_file = models.FileField(upload_to='stories/')
-    created_at = models.DateTimeField(default=timezone.now)
+from Trufrend.models import Profile
+from AdminSide.models import DoctorData
+class Feedback(models.Model):
+    profile=models.ForeignKey(Profile,on_delete=models.CASCADE)
+    doctor=models.ForeignKey(DoctorData,on_delete=models.CASCADE)
+    reason=models.TextField(null=True,blank=True)
     def __str__(self):
-        return str(self.story_file)
-
-# Create your models here.
+        return str(self.doctor)

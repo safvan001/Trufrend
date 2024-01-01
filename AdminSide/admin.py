@@ -1,5 +1,5 @@
 from django.contrib import admin
-from AdminSide.models import Quotes,Languages,Specality,Stories,DoctorData,Remainder,AdminUser
+from AdminSide.models import Quotes,Remainder,AdminUser,Languages,Specality,Stories,DoctorData
 from django.contrib.auth.admin import UserAdmin
 # from .models import DoctorData,Stories
 

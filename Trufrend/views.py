@@ -4,9 +4,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from decouple import config
 from twilio.rest import Client
-
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating,Usercount,Languages
+from django.utils import timezone
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating,Usercount,Languages,Recent
 from AdminSide.models import DoctorData
+
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import status
@@ -21,7 +22,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics,mixins
-from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer,RatingSerializer,OnlineUserCountSerializer
+from Trufrend.serializers import ProfileSerializer,VideoSerializer,VideoPackSerializer,ChallengeSerializer,DpSerializer,FavoriteProfileSerializer,ContactSerializer,RatingSerializer,OnlineUserCountSerializer,RecentSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -87,7 +88,6 @@ class Dp(generics.CreateAPIView):
     serializer_class = DpSerializer
 
 
-
 class Nickname(APIView):
     def post(self, request):
         nick_name = request.data.get('nick_name')
@@ -103,8 +103,6 @@ class Nickname(APIView):
         # profile=Profile.objects.create(nick_name=nick_name)
         # profile.save()
         # return Response({'message': 'Nick name added'}, status=status.HTTP_200_OK)
-
-
 class ChallengeList(generics.ListAPIView):
     queryset=Challenge.objects.all()
     serializer_class=ChallengeSerializer
@@ -239,23 +237,6 @@ class AddLanguage(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-class VideoViewSet(viewsets.ModelViewSet):
-    queryset = Video.objects.all()
-    serializer_class = VideoSerializer
-
-class VideoPackView(generics.ListCreateAPIView):
-    queryset = VideoPack.objects.all()
-    serializer_class = VideoPackSerializer
-
-class AddToFavoriteView(generics.ListCreateAPIView):
-    queryset = Favorite.objects.all()
-    serializer_class = FavoriteProfileSerializer
-
-
-class RemoveFromFavoriteView(generics.DestroyAPIView):
-    queryset = Favorite.objects.all()
-    serializer_class = FavoriteProfileSerializer
 
 class AddVideoFavouriteView(APIView):
     def post(self,request):
@@ -393,6 +374,7 @@ class RemoveDoctorFavourite(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class RecentCallsofUser(APIView):
     def post(self,request):
         try:
@@ -466,33 +448,153 @@ class RemoveFromRecent(APIView):
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class OnlineUserCountView(APIView):
+'''
+class AddDoctorFavourite(APIView):
+    def post(self,request):
+        try:
+            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
+            doctor_username = request.data.get('doctor_username', [])
+            # Default to an empty list if not provided
+
+            if not doctor_username:
+                return Response({'error': 'doctor_username not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if the profile_id is a valid number
+            if not phone:
+                return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Get the profile object
+            try:
+                profile = Profile.objects.get(phone_number=phone)
+            except Profile.DoesNotExist:
+                return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Validate challenge IDs and ensure uniqueness
+            valid_doctor = []
+            for doctor_id in doctor_username:
+                try:
+                    doctor = DoctorData.objects.get(username=doctor_id)
+                    if doctor not in valid_doctor:  # Ensure uniqueness
+                        valid_doctor.append(doctor)
+                except DoctorData.DoesNotExist:
+                    return Response({'error': f'Doctor with ID {doctor_id} not found.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            # Add the unique challenges to the profile using the many-to-many relationship
+            profile.doctorFavour.add(*valid_doctor)
+
+            return Response({'message': 'DoctorFavourite added to the profile successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(str(e))  # Log the exception for debugging
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class RemoveDoctorFavourite(APIView):
     def post(self, request):
         try:
-            # Get the existing Usercount instance or create a new one
-            # count = int(request.data.get('count', 0))
-            user_count_instance, created = Usercount.objects.get_or_create(pk=1, defaults={'user_count': 0})
+            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
+            doctor_username = request.data.get('doctor_username', [])
 
-            # Increment the user_count by 1
-            user_count_instance.user_count += 1
-            user_count_instance.save()
+            if not doctor_username:
+                return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({'total': user_count_instance.user_count}, status=status.HTTP_201_CREATED)
+            if not phone:
+                return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                profile = Profile.objects.get(phone_number=phone)
+            except Profile.DoesNotExist:
+                return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Validate doctor IDs and ensure they exist in the favorites list
+            for doctor_id in doctor_username:
+                try:
+                    doctor = DoctorData.objects.get(username=doctor_id)
+                    if doctor in profile.doctorFavour.all():
+                        profile.doctorFavour.remove(doctor)
+                    else:
+                        return Response({'error': f'Doctor with ID {doctor_id} is not in favorites.'},
+                                        status=status.HTTP_400_BAD_REQUEST)
+                except DoctorData.DoesNotExist:
+                    return Response({'error': f'Doctor with ID {doctor_id} not found.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({'message': 'Doctor removed from favorites successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
+            print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-class OnlineUserDecrementView(APIView):
-    def post(self, request):
-        try:
-            # Get the existing Usercount instance or create a new one
-            user_count_instance, created = Usercount.objects.get_or_create(pk=1, defaults={'user_count': 0})
+'''
+# class RecentCallsofUser(APIView):
+#     def post(self,request):
+#         try:
+#             phone = request.data.get('phone')  # Change 'id' to 'profile_id'
+#             doctor_ids = request.data.get('doctor_ids', [])
+#             # Default to an empty list if not provided
+#             if not doctor_ids:
+#                 return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Check if the profile_id is a valid number
+#             if not phone:
+#                 return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Get the profile object
+#             try:
+#                 profile = Profile.objects.get(phone_number=phone)
+#             except Profile.DoesNotExist:
+#                 return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+#
+#             # Validate challenge IDs and ensure uniqueness
+#             valid_doctor = []
+#             for doctor_id in doctor_ids:
+#                 try:
+#                     doctor = DoctorData.objects.get(id=doctor_id)
+#                     if doctor not in valid_doctor:  # Ensure uniqueness
+#                         valid_doctor.append(doctor)
+#                 except DoctorData.DoesNotExist:
+#                     return Response({'error': f'Doctor with ID {doctor_id} not found.'},
+#                                     status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Add the unique challenges to the profile using the many-to-many relationship
+#             profile.recent_calls.add(*valid_doctor)
+#
+#             return Response({'message': 'Recent Calls added to the profile successfully.'}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             print(str(e))  # Log the exception for debugging
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# class RemoveFromRecent(APIView):
+#     def post(self, request):
+#         try:
+#             phone = request.data.get('phone')  # Change 'id' to 'profile_id'
+#             doctor_ids = request.data.get('doctor_ids', [])
+#
+#             if not doctor_ids:
+#                 return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             if not phone:
+#                 return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             try:
+#                 profile = Profile.objects.get(phone_number=phone)
+#             except Profile.DoesNotExist:
+#                 return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+#
+#             # Validate doctor IDs and ensure they exist in the favorites list
+#             for doctor_id in doctor_ids:
+#                 try:
+#                     doctor = DoctorData.objects.get(id=doctor_id)
+#                     if doctor in profile.recent_calls.all():
+#                         profile.recent_calls.remove(doctor)
+#                     else:
+#                         return Response({'error': f'Doctor with ID {doctor_id} is not in favorites.'},
+#                                         status=status.HTTP_400_BAD_REQUEST)
+#                 except DoctorData.DoesNotExist:
+#                     return Response({'error': f'Doctor with ID {doctor_id} not found.'},
+#                                     status=status.HTTP_400_BAD_REQUEST)
+#
+#             return Response({'message': 'Doctor removed from Recent Calls successfully.'}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             print(str(e))  # Log the exception for debugging
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            # Decrement the user_count by 1
-            user_count_instance.user_count -= 1
-            user_count_instance.save()
 
-            return Response({'total': user_count_instance.user_count}, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetUserCountView(APIView):
     def get(self, request):
@@ -504,42 +606,139 @@ class GetUserCountView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# class VideoFavouriteView(generics.ListCreateAPIView):
-#     queryset = VideoFavourite.objects.all()
-#     serializer_class=VideoFavouriteSerializer
 
-# class StoriesView(generics.ListCreateAPIView):
-#     queryset=Stories.objects.all()
-#     serializer_class = StorySerializer
-
-# class ContactusView(APIView):
-#     def post(self,request):
-#         phone="+91" + request.data.get('phone')
-#         firstname=request.data.get('firstname')
-#         Lastname=request.data.get('Lastname')
-#         email=request.data.get('email')
-#         subject=request.data.get('subject')
-#         description=request.data.get('description')
-#         profile = Profile.objects.get(phone_number=phone)
-#         if profile:
-#             # Assuming you have a serializer for ContactUs
-#             contact_serializer = ContactSerializer(data={
-#                 'firstname': firstname,
-#                 'Lastname': Lastname,
-#                 'email': email,
-#                 'subject': subject,
-#                 'description': description,
-#             })
-#             if contact_serializer.is_valid():
-#                 contact_serializer.save()
-#                 return Response({'message': 'Successfully registered your Query'}, status=status.HTTP_201_CREATED)
-#             else:
-#                 return Response({'error': contact_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-#
-#         else:
-#             return Response({'error': 'Profile does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+# class GetProfilesByDoctor(APIView):
+#     def get(self, request, doctor_username):
+#         try:
+#             # Filter DoctorData instances based on the username
+#             matching_doctors = DoctorData.objects.filter(username=doctor_username)
+#
+#             if not matching_doctors.exists():
+#                 return Response({'error': 'Doctor not found for the given username'}, status=status.HTTP_404_NOT_FOUND)
+#
+#             # Fetch profiles that have called the doctor from the Recent model
+#             calling_profiles = Recent.objects.filter(doctor__in=matching_doctors).values('profile')
+#
+#             # Extract the profile IDs from the query result
+#             profile_ids = calling_profiles.values_list('profile', flat=True)
+#
+#             # Retrieve the Profile instances based on the profile IDs
+#             profiles = Profile.objects.filter(id__in=profile_ids)
+#
+#             # Serialize the profiles
+#             serializer = ProfileSerializer(profiles, many=True)
+#
+#             return Response({'profiles': serializer.data}, status=status.HTTP_200_OK)
+#
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+from collections import Counter
+class GetRecentProfile(APIView):
+    def get(self, request, doctor_username):
+        try:
+            # Filter DoctorData instances based on the username
+            matching_doctors = DoctorData.objects.filter(username=doctor_username)
+
+            if not matching_doctors.exists():
+                return Response({'error': 'Doctor not found for the given username'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Fetch profiles that have called the doctor from the Recent model
+            calling_profiles = Recent.objects.filter(doctor__in=matching_doctors).values('profile')
+
+            # Extract the profile IDs from the query result
+            profile_ids = calling_profiles.values_list('profile', flat=True)
+
+            # Count the occurrences of each profile ID
+            profile_id_counts = Counter(profile_ids)
+
+            # Retrieve the Profile instances based on the unique profile IDs
+            profiles = Profile.objects.filter(id__in=profile_id_counts.keys())
+
+            # Duplicate phone numbers based on the number of occurrences in the result set
+            profiles_data = [{'phone_number': profile.phone_number, 'nick_name': profile.nick_name} for profile in profiles for _ in range(profile_id_counts[profile.id])]
+
+            # return Response({'profiles': profiles_data}, status=status.HTTP_200_OK)
+            return Response(profiles_data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+class AddRecent(APIView):
+    def post(self, request):
+        phone = request.data.get('phone')
+        doctor_username = request.data.get('doctor_username')
+        time=timezone.now()
+        try:
+            # Get the profile instance based on the phone number
+            profile_instance = Profile.objects.get(phone_number=phone)
+
+            # Get the doctor instance based on the username
+            doctor_instance = DoctorData.objects.get(username=doctor_username)
+
+            # Create a new Recent instance associating the profile and doctor
+            Recent.objects.create(profile=profile_instance, doctor=doctor_instance,time=time)
+
+            return Response({'message': f'Successfully associated {doctor_username} with {phone}'}, status=status.HTTP_201_CREATED)
+
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile not found for the given phone number'}, status=status.HTTP_404_NOT_FOUND)
+
+        except DoctorData.DoesNotExist:
+            return Response({'error': 'Doctor not found for the given username'}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+# class AddRecent(APIView):
+#     def post(self, request):
+#         phone = request.data.get('phone')
+#         doctor_username = request.data.get('doctor_username')
+#         time = timezone.now()
+#         try:
+#             # Get the profile instance based on the phone number
+#             profile_instance = Profile.objects.get(phone_number=phone)
+#
+#             # Get the doctor instances based on the username
+#             doctor_instances = DoctorData.objects.filter(username=doctor_username)
+#
+#             # Create a new Recent instance associating the profile and doctors
+#             recent_instance = Recent.objects.create(profile=profile_instance, time=time)
+#             recent_instance.doctor.set(doctor_instances)
+#
+#             return Response({'message': f'Successfully associated {doctor_username} with {phone}'}, status=status.HTTP_201_CREATED)
+#
+#         except Profile.DoesNotExist:
+#             return Response({'error': 'Profile not found for the given phone number'}, status=status.HTTP_404_NOT_FOUND)
+#
+#         except DoctorData.DoesNotExist:
+#             return Response({'error': 'Doctor not found for the given username'}, status=status.HTTP_404_NOT_FOUND)
+#
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+class GetRecentDoctors(APIView):
+    def get(self, request, phone_number):
+        try:
+            # Get the profile instance based on the phone number
+            profile_instance = Profile.objects.get(phone_number=phone_number)
+
+            # Fetch doctors added under the profile from the Recent model
+            added_doctors = Recent.objects.filter(profile=profile_instance)
+
+            # Serialize the recent data
+            serializer = RecentSerializer(added_doctors, many=True)
+
+            # return Response({'doctors': serializer.data}, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile not found for the given phone number'}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+from AdminSide.serializers import DoctorDataSerializer
 
 
 class AddRatingView(APIView):
@@ -551,7 +750,6 @@ class AddRatingView(APIView):
             # Get the profile and doctor objects
             doctor = DoctorData.objects.get(username=username)
             profile = Profile.objects.get(phone_number=phone)
-
 
             # Check if a rating already exists for this profile-doctor pair
             rating= Rating.objects.create(doctor=doctor,profile=profile,rating_value=rating_value)
@@ -571,8 +769,6 @@ class AddRatingView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 class DoctorAverageRatingView(APIView):
     def post(self, request):
         username = request.data.get('username')
@@ -595,6 +791,7 @@ class DoctorAverageRatingView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class SetUserOnline(APIView):
     def post(self, request):

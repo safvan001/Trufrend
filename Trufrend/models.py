@@ -1,13 +1,12 @@
-from django.db import models
 
+from django.db import models
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 from multiselectfield import MultiSelectField
 from os.path import basename
-
-
-
+from django.utils import timezone
+# from AdminSide.models import DoctorData
 
 CHOICES = (
         ('Anxiety', 'Anxiety'),
@@ -73,17 +72,23 @@ class Profile(models.Model):
     challenges = models.ManyToManyField(Challenge)
     language=models.ManyToManyField(Languages)
     videoFavour = models.ManyToManyField(Video)
+    # from AdminSide.models import DoctorData
     from AdminSide.models import DoctorData
     doctorFavour=models.ManyToManyField(DoctorData, related_name='doctor_fav_profiles')
     from AdminSide.models import DoctorData
-    recent_calls=models.ManyToManyField(DoctorData, related_name='recent_calls_of_user')
+    recent_calls = models.ManyToManyField(DoctorData, related_name='recent_calls_of_user')
 
     def __str__(self):
         return self.phone_number
+class Recent(models.Model):
+    from AdminSide.models import DoctorData
+    doctor=models.ForeignKey(DoctorData,on_delete=models.CASCADE)
+    profile=models.ForeignKey(Profile,on_delete=models.CASCADE)
+    time=models.DateTimeField(default=timezone.now, null=True, blank=True)
 class Rating(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     from AdminSide.models import DoctorData
-    doctor = models.ForeignKey(DoctorData, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(DoctorData,on_delete=models.CASCADE,default='')
     rating_value = models.IntegerField()
 
 class Usercount(models.Model):

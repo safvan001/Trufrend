@@ -35,6 +35,7 @@ urlpatterns = [
     # path('deletestory/',Storydeleting.as_view(),name='delete'),
     # path('getallstory/',get_all_stories,name='getallstory'),
     path('quotes/',QuotesPostingView.as_view(),name='quotes'),
+    path('addtorecent/',RecentCallsofDoctor.as_view(),name='addtorecent'),
     path('adminregister/',AdminUserRegisteration.as_view(),name='adminuserregistertaion'),
     path('adminlogin/',AdminLogin.as_view(),name='AdminLogin'),
     path('setonline/',SetDoctorOnlineStatus.as_view(),name='doctorlive'),

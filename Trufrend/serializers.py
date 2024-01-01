@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating,Usercount,Languages
-from AdminSide.models import DoctorData
+from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating,Usercount,Languages,Recent
+
 
 
 class ChallengeSerializer(serializers.ModelSerializer):
@@ -21,13 +21,15 @@ class VideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
         fields = '__all__'
+
 class ProfileSerializer(serializers.ModelSerializer):
-    from AdminSide.serializers import DoctorDataSerializer
-    challenges=ChallengeSerializer(many=True)
+    # challenges=ChallengeSerializer(many=True)
     videoFavour = VideoSerializer(many=True)
+    from AdminSide.serializers import DoctorDataSerializer
     doctorFavour=DoctorDataSerializer(many=True)
     language=LanguageSerilaizer(many=True)
-    recent_calls=DoctorDataSerializer(many=True)
+    # from AdminSide.serializers import DoctorDataSerializer
+    # recent_calls=DoctorDataSerializer(many=True)
     class Meta:
         model = Profile
         fields = '__all__'
@@ -46,11 +48,21 @@ class OnlineUserCountSerializer(serializers.ModelSerializer):
         model=Usercount
         fields='__all__'
 class RatingSerializer(serializers.ModelSerializer):
-    # profile=ProfileSerializer()
+    profile=ProfileSerializer(many=True)
     # doctor=DoctorDataSerializer()
     class Meta:
         model = Rating
         fields = '__all__'
+class RecentSerializer(serializers.ModelSerializer):
+    from AdminSide.serializers import DoctorDataSerializer
+    doctor=DoctorDataSerializer()
+    # profile = ProfileSerializer()
+
+    class Meta:
+        model =Recent
+        # exclude = ['profile']
+        fields=['id','doctor','time']
+
 class DpSerializer(serializers.ModelSerializer):
     class Meta:
         model=Profile

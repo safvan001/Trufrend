@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'Tru_frend.wsgi.application'
 
 # Database
 # # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+#
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -89,18 +89,16 @@ WSGI_APPLICATION = 'Tru_frend.wsgi.application'
 # }
 from decouple import config
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Trufrenddb',
+        'NAME': 'asmibackend',
         'USER': config('DB_USER', default='') ,
         'PASSWORD': config('DB_PASSWORD', default=''),
         'HOST': config('DB_HOST', default=''),
         'PORT': '5432',
     }
 }
-
 
 
 # 'USER': config('DB_USER', default=''),

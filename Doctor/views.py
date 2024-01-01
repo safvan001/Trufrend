@@ -1,13 +1,15 @@
 from django.shortcuts import render
-from Doctor.models import Stories
-from Doctor.serializers import StoriesSerializer
+
 from AdminSide.serializers import  DoctorDataSerializer
+from Doctor.serializers import FeedbackSerializer
 from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework import generics
 from django.utils import timezone
 from rest_framework.views import APIView
+from Trufrend.models import Profile
 from AdminSide.models import DoctorData
+from Doctor.models import Feedback
 from django.contrib.auth.hashers import check_password
 from rest_framework.response import Response
 from rest_framework import status
@@ -44,59 +46,30 @@ class DoctorLoginView(APIView):
         else:
             # Authentication failed
             return Response({'detail': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
-class DoctorDataDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = DoctorData.objects.all()
-    serializer_class = DoctorDataSerializer
-    lookup_field = 'username'  # Use 'username' as the lookup field
+class DoctorFeedback(APIView):
+    def post(self,request):
+        phone=request.data.get('phone')
+        doctor_username=request.data.get('doctor_username')
+        reason=request.data.get('reason')
+        try:
+            profile=Profile.objects.get(phone_number=phone)
+            doctor=DoctorData.objects.get(username=doctor_username)
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({'message': 'Doctor data updated successfully.'})
+            feedback = Feedback.objects.create(doctor=doctor, profile=profile, reason=reason)
+            serializer=FeedbackSerializer(feedback)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    def perform_update(self, serializer):
-        serializer.save()
+        except DoctorData.DoesNotExist:
+            return Response({'error': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({'message': 'Doctor data deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
-class storiesView(generics.ListCreateAPIView):
-    queryset = Stories.objects.all()
-    serializer_class = StoriesSerializer
-
-    def get(self, request, *args, **kwargs):
-        # Get the current time
-        current_time = timezone.now()
-
-        # Iterate over all Stories instances
-        for story in Stories.objects.all():
-            # Access the created_at attribute
-            created_at = story.created_at
-
-            # Define the threshold (e.g., 2 minutes)
-            threshold = timezone.timedelta(minutes=3)
-
-            # Check if the story is older than the threshold
-            if current_time > created_at + threshold:
-                # Delete the story if it's older than the threshold
-                story.story_file.delete()
-                story.delete()
-
-        return self.list(request, *args, **kwargs)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def get(self,request):
+        try:
+            feedbacks=Feedback.objects.all()
+            serilaizer=FeedbackSerializer(feedbacks,many=True)
+            return Response(serilaizer.data,status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

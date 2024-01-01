@@ -18,11 +18,8 @@ from django.urls import path,include
 from .views import *
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework import routers
 
 
-router = routers.DefaultRouter()
-router.register(r'videos', VideoViewSet, basename='video')
 
 
 
@@ -41,6 +38,10 @@ urlpatterns = [
     path('challenge/',ChallengeList.as_view(),name='challenge'),
     path('addrecent/',RecentCallsofUser.as_view(),name='addrecent'),
     path('removerecent/',RemoveFromRecent.as_view(),name='removerecent'),
+    # path('addrecent/',AddRecent.as_view(),name='addrecent'),
+    # path('get_recent_doctors/<str:phone_number>/', GetRecentDoctors.as_view(), name='get_recent_doctors'),
+    # path('get_profiles_by_doctor/<str:doctor_username>/', GetRecentProfile.as_view(), name='get_profiles_by_doctor'),
+    # path('removerecent/',RemoveFromRecent.as_view(),name='removerecent'),
     path('usercount/',UserCount.as_view(),name='usecount'),
     path('setuserlive/',SetUserOnline.as_view(),name='setuserlive'),
     path('setuseroff/',SetUserOffline.as_view(),name='setuseroff'),
@@ -54,16 +55,10 @@ urlpatterns = [
     path('rating/',AddRatingView.as_view(),name='rating'),
     path('showrating/',DoctorAverageRatingView.as_view(),name='showrating'),
     path('videotitle',Videotitle.as_view(),name='videotitle'),
-    path('videopack/', VideoPackView.as_view(), name='video-detail'),
-    path('add-to-favorite/', AddToFavoriteView.as_view(), name='add-to-favorite'),
-    path('remove-from-favorite/<int:pk>/', RemoveFromFavoriteView.as_view(), name='remove-from-favorite'),
     path('contactUs/', ContactUsCreateAPIView.as_view(), name='contactUs'),
-    path('onlineuser/',OnlineUserCountView.as_view(),name='onlineuser'),
-    path('offlineuser/',OnlineUserDecrementView.as_view(),name='offlineuser'),
     path('totalcount/',GetUserCountView.as_view(),name='totalcount'),
     path('get_user_profile/', get_user_profile.as_view(), name='get_user_profile'),
     path('Userdelete/',UserDelete.as_view(),name='Userdelete'),
 ]
-urlpatterns += router.urls
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
