@@ -302,153 +302,154 @@ class DeleteVideoFavouriteView(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-class AddDoctorFavourite(APIView):
-    def post(self,request):
-        try:
-            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
-            doctor_ids = request.data.get('doctor_ids', [])
-            # Default to an empty list if not provided
 
-            if not doctor_ids:
-                return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+# class AddDoctorFavourite(APIView):
+#     def post(self,request):
+#         try:
+#             phone = request.data.get('phone')  # Change 'id' to 'profile_id'
+#             doctor_ids = request.data.get('doctor_ids', [])
+#             # Default to an empty list if not provided
+#
+#             if not doctor_ids:
+#                 return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Check if the profile_id is a valid number
+#             if not phone:
+#                 return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Get the profile object
+#             try:
+#                 profile = Profile.objects.get(phone_number=phone)
+#             except Profile.DoesNotExist:
+#                 return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+#
+#             # Validate challenge IDs and ensure uniqueness
+#             valid_doctor = []
+#             for doctor_id in doctor_ids:
+#                 try:
+#                     doctor = DoctorData.objects.get(id=doctor_id)
+#                     if doctor not in valid_doctor:  # Ensure uniqueness
+#                         valid_doctor.append(doctor)
+#                 except DoctorData.DoesNotExist:
+#                     return Response({'error': f'Doctor with ID {doctor_id} not found.'},
+#                                     status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Add the unique challenges to the profile using the many-to-many relationship
+#             profile.doctorFavour.add(*valid_doctor)
+#
+#             return Response({'message': 'DoctorFavourite added to the profile successfully.'}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             print(str(e))  # Log the exception for debugging
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# class RemoveDoctorFavourite(APIView):
+#     def post(self, request):
+#         try:
+#             phone = request.data.get('phone')  # Change 'id' to 'profile_id'
+#             doctor_ids = request.data.get('doctor_ids', [])
+#
+#             if not doctor_ids:
+#                 return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             if not phone:
+#                 return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             try:
+#                 profile = Profile.objects.get(phone_number=phone)
+#             except Profile.DoesNotExist:
+#                 return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+#
+#             # Validate doctor IDs and ensure they exist in the favorites list
+#             for doctor_id in doctor_ids:
+#                 try:
+#                     doctor = DoctorData.objects.get(id=doctor_id)
+#                     if doctor in profile.doctorFavour.all():
+#                         profile.doctorFavour.remove(doctor)
+#                     else:
+#                         return Response({'error': f'Doctor with ID {doctor_id} is not in favorites.'},
+#                                         status=status.HTTP_400_BAD_REQUEST)
+#                 except DoctorData.DoesNotExist:
+#                     return Response({'error': f'Doctor with ID {doctor_id} not found.'},
+#                                     status=status.HTTP_400_BAD_REQUEST)
+#
+#             return Response({'message': 'Doctor removed from favorites successfully.'}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             print(str(e))  # Log the exception for debugging
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            # Check if the profile_id is a valid number
-            if not phone:
-                return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
+# class RecentCallsofUser(APIView):
+#     def post(self,request):
+#         try:
+#             phone = request.data.get('phone')  # Change 'id' to 'profile_id'
+#             doctor_ids = request.data.get('doctor_ids', [])
+#             # Default to an empty list if not provided
+#
+#             if not doctor_ids:
+#                 return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Check if the profile_id is a valid number
+#             if not phone:
+#                 return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Get the profile object
+#             try:
+#                 profile = Profile.objects.get(phone_number=phone)
+#             except Profile.DoesNotExist:
+#                 return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+#
+#             # Validate challenge IDs and ensure uniqueness
+#             valid_doctor = []
+#             for doctor_id in doctor_ids:
+#                 try:
+#                     doctor = DoctorData.objects.get(id=doctor_id)
+#                     if doctor not in valid_doctor:  # Ensure uniqueness
+#                         valid_doctor.append(doctor)
+#                 except DoctorData.DoesNotExist:
+#                     return Response({'error': f'Doctor with ID {doctor_id} not found.'},
+#                                     status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Add the unique challenges to the profile using the many-to-many relationship
+#             profile.recent_calls.add(*valid_doctor)
+#
+#             return Response({'message': 'Recent Calls added to the profile successfully.'}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             print(str(e))  # Log the exception for debugging
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# class RemoveFromRecent(APIView):
+#     def post(self, request):
+#         try:
+#             phone = request.data.get('phone')  # Change 'id' to 'profile_id'
+#             doctor_ids = request.data.get('doctor_ids', [])
+#
+#             if not doctor_ids:
+#                 return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             if not phone:
+#                 return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#             try:
+#                 profile = Profile.objects.get(phone_number=phone)
+#             except Profile.DoesNotExist:
+#                 return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+#
+#             # Validate doctor IDs and ensure they exist in the favorites list
+#             for doctor_id in doctor_ids:
+#                 try:
+#                     doctor = DoctorData.objects.get(id=doctor_id)
+#                     if doctor in profile.recent_calls.all():
+#                         profile.recent_calls.remove(doctor)
+#                     else:
+#                         return Response({'error': f'Doctor with ID {doctor_id} is not in favorites.'},
+#                                         status=status.HTTP_400_BAD_REQUEST)
+#                 except DoctorData.DoesNotExist:
+#                     return Response({'error': f'Doctor with ID {doctor_id} not found.'},
+#                                     status=status.HTTP_400_BAD_REQUEST)
+#
+#             return Response({'message': 'Doctor removed from Recent Calls successfully.'}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             print(str(e))  # Log the exception for debugging
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            # Get the profile object
-            try:
-                profile = Profile.objects.get(phone_number=phone)
-            except Profile.DoesNotExist:
-                return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-            # Validate challenge IDs and ensure uniqueness
-            valid_doctor = []
-            for doctor_id in doctor_ids:
-                try:
-                    doctor = DoctorData.objects.get(id=doctor_id)
-                    if doctor not in valid_doctor:  # Ensure uniqueness
-                        valid_doctor.append(doctor)
-                except DoctorData.DoesNotExist:
-                    return Response({'error': f'Doctor with ID {doctor_id} not found.'},
-                                    status=status.HTTP_400_BAD_REQUEST)
-
-            # Add the unique challenges to the profile using the many-to-many relationship
-            profile.doctorFavour.add(*valid_doctor)
-
-            return Response({'message': 'DoctorFavourite added to the profile successfully.'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(str(e))  # Log the exception for debugging
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-class RemoveDoctorFavourite(APIView):
-    def post(self, request):
-        try:
-            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
-            doctor_ids = request.data.get('doctor_ids', [])
-
-            if not doctor_ids:
-                return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            if not phone:
-                return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            try:
-                profile = Profile.objects.get(phone_number=phone)
-            except Profile.DoesNotExist:
-                return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-            # Validate doctor IDs and ensure they exist in the favorites list
-            for doctor_id in doctor_ids:
-                try:
-                    doctor = DoctorData.objects.get(id=doctor_id)
-                    if doctor in profile.doctorFavour.all():
-                        profile.doctorFavour.remove(doctor)
-                    else:
-                        return Response({'error': f'Doctor with ID {doctor_id} is not in favorites.'},
-                                        status=status.HTTP_400_BAD_REQUEST)
-                except DoctorData.DoesNotExist:
-                    return Response({'error': f'Doctor with ID {doctor_id} not found.'},
-                                    status=status.HTTP_400_BAD_REQUEST)
-
-            return Response({'message': 'Doctor removed from favorites successfully.'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(str(e))  # Log the exception for debugging
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-class RecentCallsofUser(APIView):
-    def post(self,request):
-        try:
-            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
-            doctor_ids = request.data.get('doctor_ids', [])
-            # Default to an empty list if not provided
-
-            if not doctor_ids:
-                return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Check if the profile_id is a valid number
-            if not phone:
-                return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Get the profile object
-            try:
-                profile = Profile.objects.get(phone_number=phone)
-            except Profile.DoesNotExist:
-                return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-            # Validate challenge IDs and ensure uniqueness
-            valid_doctor = []
-            for doctor_id in doctor_ids:
-                try:
-                    doctor = DoctorData.objects.get(id=doctor_id)
-                    if doctor not in valid_doctor:  # Ensure uniqueness
-                        valid_doctor.append(doctor)
-                except DoctorData.DoesNotExist:
-                    return Response({'error': f'Doctor with ID {doctor_id} not found.'},
-                                    status=status.HTTP_400_BAD_REQUEST)
-
-            # Add the unique challenges to the profile using the many-to-many relationship
-            profile.recent_calls.add(*valid_doctor)
-
-            return Response({'message': 'Recent Calls added to the profile successfully.'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(str(e))  # Log the exception for debugging
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-class RemoveFromRecent(APIView):
-    def post(self, request):
-        try:
-            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
-            doctor_ids = request.data.get('doctor_ids', [])
-
-            if not doctor_ids:
-                return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            if not phone:
-                return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
-
-            try:
-                profile = Profile.objects.get(phone_number=phone)
-            except Profile.DoesNotExist:
-                return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-            # Validate doctor IDs and ensure they exist in the favorites list
-            for doctor_id in doctor_ids:
-                try:
-                    doctor = DoctorData.objects.get(id=doctor_id)
-                    if doctor in profile.recent_calls.all():
-                        profile.recent_calls.remove(doctor)
-                    else:
-                        return Response({'error': f'Doctor with ID {doctor_id} is not in favorites.'},
-                                        status=status.HTTP_400_BAD_REQUEST)
-                except DoctorData.DoesNotExist:
-                    return Response({'error': f'Doctor with ID {doctor_id} not found.'},
-                                    status=status.HTTP_400_BAD_REQUEST)
-
-            return Response({'message': 'Doctor removed from Recent Calls successfully.'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(str(e))  # Log the exception for debugging
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-'''
 class AddDoctorFavourite(APIView):
     def post(self,request):
         try:
@@ -521,7 +522,7 @@ class RemoveDoctorFavourite(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-'''
+
 # class RecentCallsofUser(APIView):
 #     def post(self,request):
 #         try:
@@ -595,7 +596,6 @@ class RemoveDoctorFavourite(APIView):
 #             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
 class GetUserCountView(APIView):
     def get(self, request):
         try:
@@ -605,11 +605,9 @@ class GetUserCountView(APIView):
             return Response({'user_count': user_count_instance.user_count}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 class WellnessVideos(generics.ListCreateAPIView):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
-
 
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse

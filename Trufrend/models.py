@@ -75,8 +75,8 @@ class Profile(models.Model):
     # from AdminSide.models import DoctorData
     from AdminSide.models import DoctorData
     doctorFavour=models.ManyToManyField(DoctorData, related_name='doctor_fav_profiles')
-    from AdminSide.models import DoctorData
-    recent_calls = models.ManyToManyField(DoctorData, related_name='recent_calls_of_user')
+    # from AdminSide.models import DoctorData
+    # recent_calls = models.ManyToManyField(DoctorData, related_name='recent_calls_of_user')
 
     def __str__(self):
         return self.phone_number

@@ -163,7 +163,6 @@ class AdminUser(models.Model):
         return self.email
 
 
-
 class Remainder(models.Model):
     date=models.DateTimeField(default=timezone.now, null=True, blank=True)
 
