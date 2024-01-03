@@ -451,18 +451,18 @@ class DeleteVideoFavouriteView(APIView):
 
 
 class AddDoctorFavourite(APIView):
-    def post(self,request):
+    def post(self, request):
         try:
-            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
-            doctor_username = request.data.get('doctor_username', [])
-            # Default to an empty list if not provided
+            phone = request.data.get('phone')
+            doctor_username = request.data.get('doctor_username')
 
+            # Default to an empty list if not provided
             if not doctor_username:
                 return Response({'error': 'doctor_username not provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Check if the profile_id is a valid number
+            # Check if the phone is provided
             if not phone:
-                return Response({'error': 'phone provided.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
             # Get the profile object
             try:
@@ -470,19 +470,14 @@ class AddDoctorFavourite(APIView):
             except Profile.DoesNotExist:
                 return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-            # Validate challenge IDs and ensure uniqueness
-            valid_doctor = []
-            for doctor_id in doctor_username:
-                try:
-                    doctor = DoctorData.objects.get(username=doctor_id)
-                    if doctor not in valid_doctor:  # Ensure uniqueness
-                        valid_doctor.append(doctor)
-                except DoctorData.DoesNotExist:
-                    return Response({'error': f'Doctor with ID {doctor_id} not found.'},
-                                    status=status.HTTP_400_BAD_REQUEST)
+            # Validate doctor username and ensure uniqueness
+            try:
+                doctor = DoctorData.objects.get(username=doctor_username)
+            except DoctorData.DoesNotExist:
+                return Response({'error': f'Doctor with Username {doctor_username} not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Add the unique challenges to the profile using the many-to-many relationship
-            profile.doctorFavour.add(*valid_doctor)
+            # Add the unique doctor to the profile using the many-to-many relationship
+            profile.doctorFavour.add(doctor)
 
             return Response({'message': 'DoctorFavourite added to the profile successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
@@ -491,11 +486,11 @@ class AddDoctorFavourite(APIView):
 class RemoveDoctorFavourite(APIView):
     def post(self, request):
         try:
-            phone = request.data.get('phone')  # Change 'id' to 'profile_id'
-            doctor_username = request.data.get('doctor_username', [])
+            phone = request.data.get('phone')
+            doctor_username = request.data.get('doctor_username')
 
             if not doctor_username:
-                return Response({'error': 'doctor_ids not provided.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'doctor_username not provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
             if not phone:
                 return Response({'error': 'phone not provided.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -506,22 +501,20 @@ class RemoveDoctorFavourite(APIView):
                 return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
 
             # Validate doctor IDs and ensure they exist in the favorites list
-            for doctor_id in doctor_username:
-                try:
-                    doctor = DoctorData.objects.get(username=doctor_id)
-                    if doctor in profile.doctorFavour.all():
-                        profile.doctorFavour.remove(doctor)
-                    else:
-                        return Response({'error': f'Doctor with ID {doctor_id} is not in favorites.'},
-                                        status=status.HTTP_400_BAD_REQUEST)
-                except DoctorData.DoesNotExist:
-                    return Response({'error': f'Doctor with ID {doctor_id} not found.'},
-                                    status=status.HTTP_400_BAD_REQUEST)
+            try:
+                doctor = DoctorData.objects.get(username=doctor_username)
+                if doctor in profile.doctorFavour.all():
+                    profile.doctorFavour.remove(doctor)
+                    return Response({'message': f'Doctor {doctor_username} removed from favorites successfully.'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'error': f'Doctor {doctor_username} is not in favorites.'}, status=status.HTTP_400_BAD_REQUEST)
+            except DoctorData.DoesNotExist:
+                return Response({'error': f'Doctor with Username {doctor_username} not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({'message': 'Doctor removed from favorites successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 # class RecentCallsofUser(APIView):
@@ -662,7 +655,7 @@ class GetRecentProfile(APIView):
             profiles = Profile.objects.filter(id__in=profile_id_counts.keys())
 
             # Duplicate phone numbers based on the number of occurrences in the result set
-            profiles_data = [{'phone_number': profile.phone_number, 'nick_name': profile.nick_name} for profile in profiles for _ in range(profile_id_counts[profile.id])]
+            profiles_data = [{'phone_number': profile.phone_number, 'nick_name': profile.nick_name,'time':Recent.time} for profile in profiles for _ in range(profile_id_counts[profile.id])]
 
             # return Response({'profiles': profiles_data}, status=status.HTTP_200_OK)
             return Response(profiles_data, status=status.HTTP_200_OK)
