@@ -449,7 +449,7 @@ class DeleteVideoFavouriteView(APIView):
 #             print(str(e))  # Log the exception for debugging
 #             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-'''
+
 class AddDoctorFavourite(APIView):
     def post(self,request):
         try:
@@ -522,7 +522,7 @@ class RemoveDoctorFavourite(APIView):
         except Exception as e:
             print(str(e))  # Log the exception for debugging
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-'''
+
 
 # class RecentCallsofUser(APIView):
 #     def post(self,request):
@@ -639,7 +639,7 @@ from django.http import JsonResponse
 #             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 from collections import Counter
 
-'''
+
 class GetRecentProfile(APIView):
     def get(self, request, doctor_username):
         try:
@@ -694,7 +694,7 @@ class AddRecent(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-'''
+
 # class AddRecent(APIView):
 #     def post(self, request):
 #         phone = request.data.get('phone')
@@ -721,7 +721,7 @@ class AddRecent(APIView):
 #
 #         except Exception as e:
 #             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-'''
+
 class GetRecentDoctors(APIView):
     def get(self, request, phone_number):
         try:
@@ -742,7 +742,7 @@ class GetRecentDoctors(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-'''
+
 
 from AdminSide.serializers import DoctorDataSerializer
 
