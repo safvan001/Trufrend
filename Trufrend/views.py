@@ -632,7 +632,6 @@ from django.http import JsonResponse
 #             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 from collections import Counter
 
-
 class GetRecentProfile(APIView):
     def get(self, request, doctor_username):
         try:
@@ -643,25 +642,57 @@ class GetRecentProfile(APIView):
                 return Response({'error': 'Doctor not found for the given username'}, status=status.HTTP_404_NOT_FOUND)
 
             # Fetch profiles that have called the doctor from the Recent model
-            calling_profiles = Recent.objects.filter(doctor__in=matching_doctors).values('profile')
+            calling_profiles = Recent.objects.filter(doctor__in=matching_doctors)
 
-            # Extract the profile IDs from the query result
-            profile_ids = calling_profiles.values_list('profile', flat=True)
-
-            # Count the occurrences of each profile ID
-            profile_id_counts = Counter(profile_ids)
-
-            # Retrieve the Profile instances based on the unique profile IDs
-            profiles = Profile.objects.filter(id__in=profile_id_counts.keys())
+            # Extract the profile instances from the query result
+            profiles = [recent.profile for recent in calling_profiles]
 
             # Duplicate phone numbers based on the number of occurrences in the result set
-            profiles_data = [{'phone_number': profile.phone_number, 'nick_name': profile.nick_name,'time':Recent.time} for profile in profiles for _ in range(profile_id_counts[profile.id])]
+            profiles_data = [
+                {
+                    'phone_number': profile.phone_number,
+                    'nick_name': profile.nick_name,
+                    'time': recent.time,
+                }
+                for profile, recent in zip(profiles, calling_profiles)
+            ]
 
-            # return Response({'profiles': profiles_data}, status=status.HTTP_200_OK)
             return Response(profiles_data, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# class GetRecentProfile(APIView):
+#     def get(self, request, doctor_username):
+#         try:
+#             # Filter DoctorData instances based on the username
+#             matching_doctors = DoctorData.objects.filter(username=doctor_username)
+#
+#             if not matching_doctors.exists():
+#                 return Response({'error': 'Doctor not found for the given username'}, status=status.HTTP_404_NOT_FOUND)
+#
+#             # Fetch profiles that have called the doctor from the Recent model
+#             calling_profiles = Recent.objects.filter(doctor__in=matching_doctors).values('profile')
+#
+#             # Extract the profile IDs from the query result
+#             profile_ids = calling_profiles.values_list('profile', flat=True)
+#
+#             # Count the occurrences of each profile ID
+#             profile_id_counts = Counter(profile_ids)
+#
+#             # Retrieve the Profile instances based on the unique profile IDs
+#             profiles = Profile.objects.filter(id__in=profile_id_counts.keys())
+#
+#             # Duplicate phone numbers based on the number of occurrences in the result set
+#             profiles_data = [{'phone_number': profile.phone_number, 'nick_name': profile.nick_name,'time':Recent.time} for profile in profiles for _ in range(profile_id_counts[profile.id])]
+#
+#             # return Response({'profiles': profiles_data}, status=status.HTTP_200_OK)
+#             return Response(profiles_data, status=status.HTTP_200_OK)
+#
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 class AddRecent(APIView):
     def post(self, request):
         phone = request.data.get('phone')
