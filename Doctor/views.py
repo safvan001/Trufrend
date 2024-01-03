@@ -48,19 +48,14 @@ class DoctorLoginView(APIView):
             return Response({'detail': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
 class DoctorFeedback(APIView):
     def post(self,request):
-        phone=request.data.get('phone')
         doctor_username=request.data.get('doctor_username')
         reason=request.data.get('reason')
         try:
-            profile=Profile.objects.get(phone_number=phone)
             doctor=DoctorData.objects.get(username=doctor_username)
 
-            feedback = Feedback.objects.create(doctor=doctor, profile=profile, reason=reason)
+            feedback = Feedback.objects.create(doctor=doctor,reason=reason)
             serializer=FeedbackSerializer(feedback)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Profile.DoesNotExist:
-            return Response({'error': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
-
         except DoctorData.DoesNotExist:
             return Response({'error': 'Doctor not found.'}, status=status.HTTP_404_NOT_FOUND)
 

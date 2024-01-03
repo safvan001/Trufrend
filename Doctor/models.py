@@ -3,7 +3,6 @@ from django.utils import timezone
 from Trufrend.models import Profile
 from AdminSide.models import DoctorData
 class Feedback(models.Model):
-    profile=models.ForeignKey(Profile,on_delete=models.CASCADE)
     doctor=models.ForeignKey(DoctorData,on_delete=models.CASCADE)
     reason=models.TextField(null=True,blank=True)
     def __str__(self):
