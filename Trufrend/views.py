@@ -647,7 +647,7 @@ class GetRecentProfile(APIView):
                 return Response({'error': 'Doctor not found for the given username'}, status=status.HTTP_404_NOT_FOUND)
 
             # Fetch profiles that have called the doctor from the Recent model
-            calling_profiles = Recent.objects.filter(doctor__in=matching_doctors).order_by('time')
+            calling_profiles = Recent.objects.filter(doctor__in=matching_doctors).order_by('-time')
 
             # Extract the profile instances from the query result
             profiles = [recent.profile for recent in calling_profiles]
