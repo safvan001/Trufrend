@@ -63,11 +63,12 @@ class Profile(models.Model):
     nick_name = models.CharField(max_length=50)
     # DOB=models.DateField(null=True,blank=True)
     CHOICES = (
+        ('Not_Selected','Not_Selected'),
         ('Male', 'Male'),
         ('Female', 'Female'),
         ('others', 'others'),
     )
-    Gender = models.CharField(max_length=100, choices=CHOICES, null=True, blank=True, default='Male')
+    Gender = models.CharField(max_length=100, choices=CHOICES, null=True, blank=True, default='Not_Selected')
     is_online = models.BooleanField(default=False)
     challenges = models.ManyToManyField(Challenge)
     language=models.ManyToManyField(Languages)
