@@ -650,7 +650,7 @@ class GetRecentProfile(APIView):
             # Duplicate phone numbers based on the number of occurrences in the result set
             profiles_data = [
                 {
-                    'phone_number': profile.phone_number,
+                    'user_id': profile.id,
                     'nick_name': profile.nick_name,
                     'time': recent.time,
                 }
