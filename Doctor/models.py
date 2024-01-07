@@ -9,3 +9,12 @@ class Feedback(models.Model):
     time=models.DateTimeField(default=timezone.now,blank=True)
     def __str__(self):
         return str(self.doctor)
+class Schedule(models.Model):
+    user=models.ForeignKey(Profile,on_delete=models.CASCADE,default='')
+    counselor = models.ForeignKey(DoctorData, on_delete=models.CASCADE,default='')
+    date=models.DateTimeField(default=timezone.now, null=True, blank=True)
+    message=models.TextField(null=True,blank=True)
+    couselor_reply=models.TextField(blank=True,default='')
+
+    def __str__(self):
+        return str(self.user)

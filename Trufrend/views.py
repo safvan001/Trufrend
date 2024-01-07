@@ -7,7 +7,10 @@ from twilio.rest import Client
 from django.utils import timezone
 from Trufrend.models import Profile,Video,Challenge,VideoPack,Favorite,ContactUs,Rating,Usercount,Languages,Recent
 from AdminSide.models import DoctorData
-
+import pytz
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from collections import Counter
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import status
@@ -458,9 +461,7 @@ class WellnessVideos(generics.ListCreateAPIView):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
 
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from collections import Counter
+
 class AddRecent(APIView):
     def post(self, request):
         phone = request.data.get('phone')
@@ -486,7 +487,8 @@ class AddRecent(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-import pytz
+
+
 
 class GetRecentProfile(APIView):
     def get(self, request, doctor_username):

@@ -102,7 +102,7 @@ class Stories(models.Model):
 class DoctorData(models.Model):
     username=models.CharField(max_length=100)
     password=models.CharField(max_length=128)
-    Dp=models.FileField(upload_to='doctor/Dp',null=True,blank=True)
+    Dp=models.FileField(upload_to='doctor/Dp',blank=True,default='')
     DOB = models.DateField(null=True,blank=True)
     is_online = models.BooleanField(default=False)
     CHOICES = (
@@ -110,7 +110,7 @@ class DoctorData(models.Model):
         ('Female', 'Female'),
         ('others', 'others'),
     )
-    Gender=models.CharField(max_length=100,choices=CHOICES,null=True,blank=True,default='Male')
+    Gender=models.CharField(max_length=100,choices=CHOICES,blank=True,default='Male')
     Language=models.ManyToManyField(Languages,blank=True)
     Specialization=models.ManyToManyField(Specality,blank=True)
     CurrentAddress = models.TextField(null=True,blank=True)
@@ -118,25 +118,25 @@ class DoctorData(models.Model):
     name=models.CharField(max_length=100,blank=True,null=True)
     phone = models.CharField(max_length=18)
     Email=models.EmailField(null=True,blank=True)
-    Degrees = models.FileField(upload_to='doctor/certificate',null=True,blank=True)
-    Diplomas = models.FileField(upload_to='doctor/diploma',null=True,blank=True)
-    References = models.TextField(null=True,blank=True)
-    Certificates = models.FileField(upload_to='doctor/othercertificate',null=True,blank=True)
-    RCI = models.TextField(null=True,blank=True)
-    PAN = models.FileField(upload_to='doctor/PAN',null=True,blank=True)
-    Aadhaar = models.FileField(upload_to='doctor/Aadhaar',null=True,blank=True)
-    GST = models.FileField(upload_to='doctor/GST',null=True,blank=True)
-    Aboutme = models.TextField(null=True,blank=True)
-    Education = models.TextField(null=True,blank=True)
-    Experience = models.CharField(max_length=100,null=True,blank=True)
+    Degrees = models.FileField(upload_to='doctor/certificate',blank=True,default='')
+    Diplomas = models.FileField(upload_to='doctor/diploma',blank=True,default='')
+    References = models.TextField(blank=True,default='')
+    Certificates = models.FileField(upload_to='doctor/othercertificate',blank=True,default='')
+    RCI = models.TextField(blank=True,default='')
+    PAN = models.FileField(upload_to='doctor/PAN',blank=True,default='')
+    Aadhaar = models.FileField(upload_to='doctor/Aadhaar',blank=True,default='')
+    GST = models.FileField(upload_to='doctor/GST',blank=True,default='')
+    Aboutme = models.TextField(blank=True,default='')
+    Education = models.TextField(blank=True,default='')
+    Experience = models.CharField(max_length=100,blank=True,default='')
     # callDuration = models.CharField(max_length=15, default='30 Minutes', null=True, blank=True)
-    created_at=models.DateTimeField(default=timezone.now,null=True,blank=True)
+    created_at=models.DateTimeField(default=timezone.now,blank=True,null=True)
     from Trufrend.models import Video
     VideoFavour=models.ManyToManyField(Video,blank=True)
     # from Trufrend.models import Profile
     # recent_call = models.ManyToManyField(Profile, blank=True)
     # recent_call = models.ManyToManyField("Trufrend.Profile", blank=True)
-    story=models.ManyToManyField(Stories, blank=True, null=True)
+    story=models.ManyToManyField(Stories, blank=True)
 
     # def save(self, *args, **kwargs):
     #     # Handle password hashing before saving
@@ -148,7 +148,6 @@ class DoctorData(models.Model):
 
     def __str__(self):
         return self.username
-
 
 class AdminUser(models.Model):
     email=models.EmailField(null=True,blank=True)
@@ -162,12 +161,6 @@ class AdminUser(models.Model):
     def __str__(self):
         return self.email
 
-
-class Remainder(models.Model):
-    date=models.DateTimeField(default=timezone.now, null=True, blank=True)
-
-    def __str__(self):
-        return self.date
 
 class Quotes(models.Model):
     quotes=models.TextField(null=True,blank=True)

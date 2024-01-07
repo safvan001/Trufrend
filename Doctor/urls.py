@@ -26,6 +26,9 @@ app_name="Doctor"
 urlpatterns = [
     path('doctorlogin/',DoctorLoginView.as_view(),name='doctorlogin'),
     path('feedback/',DoctorFeedback.as_view(),name='DoctorFeedback'),
+    path('counselorSchedule/',CounselorScheduling.as_view(),name='counselorSchedule'),
+    path('counselorSchedule/get/<str:counselor_username>/', ScheduledCounselor.as_view(), name='counselorSchedule-get'),
+    path('counselorreply/<int:schedule_id>/',CounselorReply.as_view(),name='CounselorReply'),
+    path('counselorreply/get/<str:phone>/',GetCounselorReply.as_view(),name='CounselorReply'),
 ]
-
 
